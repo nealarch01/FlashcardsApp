@@ -63,7 +63,7 @@ extension AuthenticationView {
             let loginResponse = await AuthenticationModel()
                 .attemptLogin(userIdentifier: userIdentifier, password: password)
             if loginResponse.successful == true {
-                self.user!.authToken = loginResponse.token!
+                self.user!.setAuthToken(token: loginResponse.token!)
             } else {
                 self.errorMessage = loginResponse.message ?? "Could not login. Try again."
             }
@@ -99,7 +99,7 @@ extension AuthenticationView {
             let registerResponse = await AuthenticationModel()
                 .createNewAccount(username: self.registerFormData.username, password: self.registerFormData.password, email: self.registerFormData.email)
             if registerResponse.successful == true {
-                self.user!.authToken = registerResponse.token!
+                self.user!.setAuthToken(token: registerResponse.token!)
             } else {
                 self.errorMessage = registerResponse.message ?? "Could not create account. Try again."
             }

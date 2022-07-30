@@ -8,6 +8,9 @@
 import Foundation
 
 class User: ObservableObject {
-    @Published var authToken: String = ""
-    @Published var isLoggedIn: Bool = false
+    @Published private(set) var authToken: String = ""
+    
+    func setAuthToken(token: String) {
+        self.authToken = token
+    }
 }

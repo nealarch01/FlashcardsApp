@@ -12,15 +12,11 @@ struct ContentView: View {
     @StateObject private var viewModel = ViewModel()
     var body: some View {
         ZStack {
-            if !viewModel.isLoggedIn() {
+            if !viewModel.userLoggedIn(user)  {
                 AuthenticationView()
-                    .environmentObject(user)
             } else {
                 HomeView()
-                    .environmentObject(user)
             }
-        }.onAppear {
-            viewModel.initUser(user)
         }
     }
 }

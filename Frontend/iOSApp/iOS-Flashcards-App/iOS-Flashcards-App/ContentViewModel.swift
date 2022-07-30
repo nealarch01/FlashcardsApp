@@ -11,20 +11,11 @@ extension ContentView {
     @MainActor class ViewModel: ObservableObject {
         @Published var user: User?
         
-        public func initUser(_ user: User) {
-            self.user = user
-        }
-        
-        public func isLoggedIn() -> Bool {
-            if self.user != nil {
-                if self.user!.authToken == "" {
-                    return false
-                }
-                return true
+        public func userLoggedIn(_ u: User) -> Bool {
+            if u.authToken == "" {
+                return false
             }
-            return false
+            return true
         }
-        
-        
     }
 }
