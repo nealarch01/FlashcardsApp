@@ -1,0 +1,8 @@
+{
+    "user": "root",
+    "pass": "12345",
+    "host": "localhost",
+    "database": "FlashcardsApp",
+    "waitForConnection": true,
+    "connectionLimit": 10
+}
