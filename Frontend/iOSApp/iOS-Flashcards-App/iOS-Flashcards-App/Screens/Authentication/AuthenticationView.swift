@@ -16,14 +16,14 @@ struct AuthenticationView: View {
                 PageHeader(title: "Sign Up")
                 CaptionedTextField(caption: "Username", text: $viewModel.registerFormData.username, placeholder: "Enter username")
                 CaptionedTextField(caption: "Email", text: $viewModel.registerFormData.email, placeholder: "Enter email")
-                CaptionedTextField(caption: "Password", text: $viewModel.registerFormData.password, placeholder: "Enter password")
-                CaptionedTextField(caption: "Confirm password", text: $viewModel.registerFormData.password, placeholder: "Enter confirm password")
+                ViewableSecureField(caption: "Password", text: $viewModel.registerFormData.password, placeholder: "Enter password")
+                ViewableSecureField(caption: "Confirm password", text: $viewModel.registerFormData.confirmedPassword, placeholder: "Enter confirm password")
                 if viewModel.errorMessage != "" {
                     Text(viewModel.errorMessage)
                         .font(.system(size: 16, weight: .light))
                         .foregroundColor(Color.red)
                 }
-                SubmitFormButton(text: "Create Account", submitAction: {})
+                SubmitFormButton(text: "Create Account", submitAction: viewModel.register)
                     .padding([.top], 5)
                 HStack(spacing: 5) {
                     Text("Already have an account?")
@@ -63,6 +63,7 @@ struct AuthenticationView: View {
             
             Spacer()
         }.onAppear {
+            // Make EnvironmentObject viewable to all view model properties
             viewModel.initUser(user: user)
         }
     }
