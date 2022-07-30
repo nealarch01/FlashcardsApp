@@ -12,6 +12,7 @@ class Database {
 
     // Function will always return an array of data
     static async query(queryString: string): Promise<any | Array<any>> {
+        queryString = queryString.replace(/['|"|`]/g, "");
         try {
             const [rows, fields] = await this.connectionPool.query(queryString);
             return rows;
