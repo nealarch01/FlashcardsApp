@@ -1,6 +1,6 @@
 class InputValidator {
     verifyEmail(email: string): boolean {
-        const regex = /^([a-zA-Z]+)([\.\-_][a-zA-Z0-9]+)*[@][a-z]+([.][a-z]+)+$/;
+        const regex = /^([a-zA-Z0-9]+)([\.\-_][a-zA-Z0-9]+)*[@][a-z]+([.][a-z]+)+$/;
         return regex.test(email);
     }
 

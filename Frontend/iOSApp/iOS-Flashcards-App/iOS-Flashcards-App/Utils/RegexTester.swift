@@ -37,7 +37,7 @@ class RegexTester {
     
     
     public func email(_ email: String) -> Bool {
-        let regex = try! NSRegularExpression(pattern: #"^([a-zA-Z]+)([\.\-_][a-zA-Z0-9]+)*[@][a-z]+([.][a-z]+)+$"#)
+        let regex = try! NSRegularExpression(pattern: #"^([a-zA-Z0-9]+)([\.\-_][a-zA-Z0-9]+)*[@][a-z]+([.][a-z]+)+$"#)
         return regexTest(regex: regex, string: email)
     }
 }
