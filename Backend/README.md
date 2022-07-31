@@ -22,7 +22,7 @@ Table card_set {
   title varchar(32)
   description text
   created_at date
-  private TINYTEXT(1) // this is a boolean
+  private int(1) // this is a boolean
 }
 
 // A set can be collaborative
@@ -64,9 +64,11 @@ Table saved_sets {
 ```sql
 CREATE TABLE user (id BIGINT UNSIGNED AUTO_INCREMENT, username varchar(32), password varchar(32), created_at DATETIME, email varchar(64), PRIMARY KEY(id));
 
-INSERT INTO user (username, password, created_at) VALUES("defnotneal", "abcd123", NOW());
+INSERT INTO user (username, password, created_at, email) VALUES("defnotneal", "abcd123", NOW(), "my.email@mail.edu");
 
-CREATE TABLE card_set (id BIGINT UNSIGNED AUTO_INCREMENT, title varchar(32), description TEXT, created_at DATETIME, private TINYINT(1), PRIMARY KEY(id));
+CREATE TABLE card_set (id BIGINT UNSIGNED AUTO_INCREMENT, title varchar(32), description TEXT, created_at DATETIME, private TINYINT(1), PRIMARY KEY(id), creator_id BIGINT);
+
+ALTER TABLE card_set ADD CONSTRAINT FK_creator_id FOREIGN KEY (creator_id) REFERENCES user(id);
 
 CREATE TABLE topic (id BIGINT UNSIGNED AUTO_INCREMENT, name VARCHAR(32), DESCRIPTION TINYTEXT, PRIMARY KEY(id));
 
@@ -118,7 +120,10 @@ CREATE TABLE set_topics (
 );
 ```
 
-# Endpoints
-### POST /auth/login
-### POST /auth/register
-### POST /verify-token/
+
+### Endpoints (an incomplete list):
+POST /auth/login \
+POST /auth/register \
+POST /auth/check-token-active \
+POST /renew-token \
+GET /card/{id}
