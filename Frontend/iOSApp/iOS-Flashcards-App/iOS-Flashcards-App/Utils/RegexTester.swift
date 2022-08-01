@@ -18,9 +18,6 @@ class RegexTester {
     
     
     public func username(_ username: String) -> Bool {
-        if username.count < 6 {
-            return false
-        }
         // Pound sign used to create raw strings (escape character does not escape literals"
         let regex = try! NSRegularExpression(pattern: #"^[0-9]*[a-zA-Z]([0-9a-zA-Z]|([._\-][0-9a-zA-Z]))*$"#) // Error propagation is disabled
         return regexTest(regex: regex, string: username)
@@ -28,9 +25,6 @@ class RegexTester {
     
     
     public func password(_ password: String) -> Bool {
-        if password.count < 6 {
-            return false
-        }
         let regex = try! NSRegularExpression(pattern: #"^[0-9a-zA-Z!@#\$%&\*_\-;.\/\{\}\[\]~()]+$"#)
         return regexTest(regex: regex, string: password)
     }
