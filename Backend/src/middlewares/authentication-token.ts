@@ -18,6 +18,20 @@ class AuthenticationToken {
         }
     }
 
+    // Method that determines if a json web token has expired
+    isExpired(authToken: string): boolean {
+        try {
+            let decoded: any = jwt.verify(authToken, Secrets.jwt_secret);
+            let currentTime = new Date().getTime();
+            if (currentTime >= decoded.exp) {
+                return true;
+            }
+            return false;
+        } catch (err) {
+            return true;
+        }
+    }
+
     // Checks if a token can be decoded
     isDecodable(authToken: string): boolean {
         try {
@@ -31,8 +45,7 @@ class AuthenticationToken {
     isValid(authToken: string): boolean {
         try {
             let decoded: any = jwt.verify(authToken, Secrets.jwt_secret);
-            let currentTime = new Date().getTime();
-            if (currentTime >= decoded.exp) {
+            if (this.isExpired(authToken)) {
                 return false;
             }
             return true;
