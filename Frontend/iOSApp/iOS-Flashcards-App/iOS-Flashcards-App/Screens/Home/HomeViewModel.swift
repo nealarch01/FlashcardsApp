@@ -16,7 +16,7 @@ extension HomeView {
         }
         
         func logout() {
-            self.user!.authToken = "" // Reset auth token
+            self.user!.setAuthToken(token: "")
         }
     }
 }
