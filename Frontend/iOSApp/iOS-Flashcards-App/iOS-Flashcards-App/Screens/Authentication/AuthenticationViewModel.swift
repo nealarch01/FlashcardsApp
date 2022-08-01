@@ -75,29 +75,37 @@ extension AuthenticationView {
             let password2 = self.registerFormData.confirmedPassword
             let email = self.registerFormData.email
             
+            if username.count < 4 {
+                self.errorMessage = "Username too short."
+                return
+            }
+            
             if !self.regexTester.username(username) {
-                errorMessage = "Invalid username format. Username cannot contain spaces and must contain at least 6 characters. Hyphens, underscores, and periods are allowed but cannot be in succession."
+                self.errorMessage = "Invalid username format. Hyphens, underscores, and periods are allowed but cannot be in succession."
                 return
             }
             
             if password != password2 {
-                errorMessage = "Passwords do not match."
+                self.errorMessage = "Passwords do not match."
                 return
             }
-            
+            if password.count < 6 {
+                self.errorMessage = "Password too short"
+                return
+            }
             if !self.regexTester.password(password) {
-                errorMessage = "Invalid password. Passwords can only contain !@#$%^&*(){}[]:;|.,<>?/-= and must be at least 6 characters long"
+                self.errorMessage = "Invalid password. Passwords can only contain !@#$%^&*(){}[]:;|.,<>?/-= and must be at least 6 characters long"
                 return
             }
             
             if !self.regexTester.email(email) {
-                errorMessage = "Invalid email."
+                self.errorMessage = "Invalid email."
                 return
             }
             
-            
             let registerResponse = await AuthenticationModel()
-                .createNewAccount(username: self.registerFormData.username, password: self.registerFormData.password, email: self.registerFormData.email)
+                .createNewAccount(username: username, password: password, email: registerFormData.email)
+            
             if registerResponse.successful == true {
                 self.user!.setAuthToken(token: registerResponse.token!)
             } else {
