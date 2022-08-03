@@ -60,7 +60,7 @@ extension AuthenticationView {
                 return
             }
             
-            let loginResponse = await AuthenticationModel()
+            let loginResponse = await AuthenticationService()
                 .attemptLogin(userIdentifier: userIdentifier, password: password)
             if loginResponse.successful == true {
                 self.user!.setAuthToken(token: loginResponse.token!)
@@ -103,7 +103,7 @@ extension AuthenticationView {
                 return
             }
             
-            let registerResponse = await AuthenticationModel()
+            let registerResponse = await AuthenticationService()
                 .createNewAccount(username: username, password: password, email: registerFormData.email)
             
             if registerResponse.successful == true {

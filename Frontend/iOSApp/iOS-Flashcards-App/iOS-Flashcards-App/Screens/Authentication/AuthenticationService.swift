@@ -1,5 +1,5 @@
 //
-//  AuthenticationModel.swift
+//  AuthenticationService.swift
 //  iOS-Flashcards-App
 //
 //  Created by Neal Archival on 7/28/22.
@@ -37,7 +37,7 @@ fileprivate class AuthenticationResponse: Decodable {
 }
 
 
-class AuthenticationModel {
+class AuthenticationService {
     private func postRequest(apiURL: URL, requestBody: Data) async -> (AuthenticationResponse?, Int?) {
         var request = URLRequest(url: apiURL)
         request.httpMethod = "POST"
