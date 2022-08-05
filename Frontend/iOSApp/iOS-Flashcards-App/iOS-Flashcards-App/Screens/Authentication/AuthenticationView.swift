@@ -24,32 +24,13 @@ struct AuthenticationView: View {
                         .font(.system(size: 16, weight: .light))
                         .foregroundColor(Color.red)
                 }
-                Button(action: {
-                    isLoading.toggle()
-                    Task {
+                
+                SubmitFormButton(
+                    text: "Register",
+                    submitAction: {
                         await viewModel.register(user: self.user)
-                    }
-                    isLoading.toggle()
-                }) {
-                    Text("Sign Up")
-                        .font(.system(size: 26, weight: .medium))
-                        .foregroundColor(Color.appWhite)
-                        .frame(width: 310, height: 60)
-                        .background(Color.queenBlue)
-                        .cornerRadius(12)
-                    if isLoading == true {
-                        ProgressView()
-                    }
-                }
-                .overlay(alignment: .trailing) {
-                    if isLoading == true {
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .tint(Color.white)
-                            .padding([.trailing], 20)
-                    }
-                }
-                .padding([.top], 5)
+                    },
+                    showLoadingIndicator: $isLoading)
                 
                 HStack(spacing: 5) {
                     Text("Already have an account?")
@@ -72,29 +53,15 @@ struct AuthenticationView: View {
                         .font(.system(size: 16, weight: .light))
                         .foregroundColor(Color.red)
                 }
-                Button(action: {
-                    isLoading.toggle()
-                    Task {
+                
+                SubmitFormButton(
+                    text: "Login",
+                    submitAction: {
+                        isLoading.toggle()
                         await viewModel.login(user: self.user)
-                    }
-                    isLoading.toggle()
-                }) {
-                    Text("Login")
-                        .font(.system(size: 26, weight: .medium))
-                        .foregroundColor(Color.appWhite)
-                        .frame(width: 310, height: 60)
-                        .background(Color.queenBlue)
-                        .cornerRadius(12)
-                }
-                .padding([.top], 5)
-                .overlay(alignment: .trailing) {
-                    if isLoading == true {
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .tint(Color.white)
-                            .padding([.trailing], 20)
-                    }
-                }
+                        isLoading.toggle()
+                    },
+                    showLoadingIndicator: $isLoading)
                 
                 // Change screen text and button
                 HStack(spacing: 5) {
