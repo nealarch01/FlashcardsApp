@@ -4,7 +4,9 @@ import Secrets from "../configs/secrets.json";
 
 class AuthenticationToken {
     create(user_id: number): string {
-        return jwt.sign({ user_id }, Secrets.jwt_secret, { expiresIn: "1h" });
+        // For testing purposes, we will set the expiration to 1 day
+        // Change this later
+        return jwt.sign({ user_id }, Secrets.jwt_secret, { expiresIn: "1d" });
     }
 
     decode(authToken: string): number | undefined {
