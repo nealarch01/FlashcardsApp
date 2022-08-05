@@ -16,7 +16,7 @@ extension AuthenticationView {
         
         @Published var errorMessage: String = ""
         
-        private var user: User? // Environment Object
+//        private var user: User? // Environment Object
         
         private let regexTester = RegexTester()
         
@@ -40,7 +40,7 @@ extension AuthenticationView {
             errorMessage = ""
         }
         
-        func login() async {
+        func login(user: User) async {
             let userIdentifier = self.loginFormData.userIdentifier
             let password = self.loginFormData.password
             if userIdentifier.contains("@") {
@@ -63,13 +63,13 @@ extension AuthenticationView {
             let loginResponse = await AuthenticationService()
                 .attemptLogin(userIdentifier: userIdentifier, password: password)
             if loginResponse.successful == true {
-                self.user!.setAuthToken(token: loginResponse.token!)
+                user.setAuthToken(token: loginResponse.token!)
             } else {
                 self.errorMessage = loginResponse.message ?? "Could not login. Try again."
             }
         }
         
-        func register() async {
+        func register(user: User) async {
             let username = self.registerFormData.username
             let password = self.registerFormData.password
             let password2 = self.registerFormData.confirmedPassword
@@ -107,14 +107,10 @@ extension AuthenticationView {
                 .createNewAccount(username: username, password: password, email: registerFormData.email)
             
             if registerResponse.successful == true {
-                self.user!.setAuthToken(token: registerResponse.token!)
+                user.setAuthToken(token: registerResponse.token!)
             } else {
                 self.errorMessage = registerResponse.message ?? "Could not create account. Try again."
             }
-        }
-        
-        func initUser(user: User) {
-            self.user = user
         }
     }
     
