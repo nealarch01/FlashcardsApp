@@ -18,3 +18,24 @@ export enum GenericTypes {
     number = "number"
 }
 
+export interface CardSetMetaData {
+    id: number;
+    creator_id: number;
+    title: string;
+    description: string;
+    created_at: string;
+    private: boolean; 
+}
+
+export interface CardData {
+    id: number;
+    presented: string;
+    hidden: string;
+}
+
+
+export interface AllCardSetData {
+    card_id: number;
+    set_id: number;
+
+}
