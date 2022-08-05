@@ -10,7 +10,7 @@ class Database {
         queueLimit: 10
     });
 
-    // Function will always return an array of data
+    // Function will always return an array of data. Only use this function is query string does not contain any quotations.
     static async query(queryString: string): Promise<any | Array<any>> {
         try {
             const [rows, fields] = await this.connectionPool.query(queryString);
@@ -18,6 +18,17 @@ class Database {
         } catch (err) {
             console.log(err);
             process.exit(1); 
+        }
+    }
+
+    // This query function uses placeholders to prevent SQL injection.
+    static async safeQuery(queryString: string, values: Array<any>) {
+        try {
+            const [rows, fields] = await this.connectionPool.query(queryString, values);
+            return rows;
+        } catch (err) {
+            console.log(err);
+            process.exit(1);
         }
     }
 
