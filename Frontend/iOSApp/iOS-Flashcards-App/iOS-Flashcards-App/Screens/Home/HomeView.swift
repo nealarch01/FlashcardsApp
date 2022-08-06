@@ -12,18 +12,14 @@ struct HomeView: View {
     @StateObject private var viewModel = ViewModel()
     var body: some View {
         TabView {
-            VStack {
+            VStack(spacing: 20) {
                 Text("Currently logged in")
                     .font(.system(size: 26, weight: .bold))
                 Button(action: {
-                    viewModel.logout()
+                    viewModel.logout(user)
                 }) {
                     Text("Click here to logout")
                 }
-                Spacer()
-            }.onAppear {
-                // Pass environment object into viewmodel
-                viewModel.initUser(user: user)
             }
             .tabItem {
                 Image(systemName: "house")

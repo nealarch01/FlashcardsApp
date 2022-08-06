@@ -9,14 +9,8 @@ import Foundation
 
 extension HomeView {
     @MainActor final class ViewModel: ObservableObject {
-        public var user: User?
-        
-        func initUser(user: User) {
-            self.user = user
-        }
-        
-        func logout() {
-            self.user!.setAuthToken(token: "")
+        func logout(_ user: User) {
+            user.setAuthToken(token: "")
         }
     }
 }
