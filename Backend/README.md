@@ -1,6 +1,8 @@
 # Backend API Information
 - Created with Node.js with Express framework using TypeScript
 - Database: Relational Database using MySQL
+
+### Note: authentication is incomplete, OAuth will be used for authentication but that will be implemented later..
 ## Database Diagram
 ![diagram-img](./assets/diagram-screenshot.png)
 
@@ -124,6 +126,5 @@ CREATE TABLE set_topics (
 ### Endpoints (an incomplete list):
 POST /auth/login \
 POST /auth/register \
-POST /auth/check-token-active \
-POST /renew-token \
-GET /card/{id}
+
+GET /card/:id
