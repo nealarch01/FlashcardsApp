@@ -58,7 +58,7 @@ class CardSetController {
             });
         }
 
-        let deleteStatus = await CardSetModel.deleteCardSet(user_id!, setID);
+        let deleteStatus = await CardSetModel.deleteCardSet(setID);
 
         if (deleteStatus === true) {
             return res.status(200).send({
