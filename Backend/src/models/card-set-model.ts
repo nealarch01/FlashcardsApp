@@ -11,18 +11,14 @@ class CardSetModel {
         return queryResult.insertId;
     }
 
-    async getCardsInSet(set_id: number): Promise<Array<CardData>> {
-        let queryString = `SELECT * FROM card WHERE id IN (SELECT card_id from set_data WHERE set_id=${set_id});`;
+
+    async deleteCardSet(card_set_id: number): Promise<boolean> {
+        let queryString = `DELETE FROM card_set WHERE id=${card_set_id};`;
         let queryResult: any = await Database.query(queryString);
-        let cards: Array<CardData> = [];
-        for (let i = 0; i < queryResult.length; i++) {
-            let cardData: CardData = {
-                id: queryResult[i].id,
-                presented: queryResult[i].presented,
-                hidden: queryResult[i].hidden
-            };
+        if (queryResult.affectedRows === 0) {
+            return false;
         }
-        return cards;
+        return true;
     }
 
     async getCardSetMetaDataFromID(card_set_id: number): Promise<CardSetMetaData | undefined> {
@@ -87,13 +83,37 @@ class CardSetModel {
         return true;
     }
 
-    async deleteCardSet(creator_id: number, card_set_id: number): Promise<boolean> {
-        let queryString = `DELETE FROM card_set WHERE creator_id=${creator_id} AND id=${card_set_id};`;
+    async addCardToSet(card_set_id: number, card_id: number): Promise<boolean> {
+        let queryString = `INSERT INTO set_data (set_id, card_id) VALUES (${card_set_id}, ${card_id}));`;
         let queryResult: any = await Database.query(queryString);
         if (queryResult.affectedRows === 0) {
             return false;
         }
         return true;
+    }
+
+    async removeCardFromSet(card_set_id: number, card_id: number): Promise<boolean> {
+        let queryString = `DELETE FROM set_data WHERE set_id = ${card_set_id} AND card_id = ${card_id};`;
+        let queryResult: any = await Database.query(queryString);
+        if (queryResult.affectedRows === 0) {
+            return false;
+        }
+        return true;
+    }
+
+
+    async getCardsInSet(set_id: number): Promise<Array<CardData>> {
+        let queryString = `SELECT * FROM card WHERE id IN (SELECT card_id from set_data WHERE set_id=${set_id});`;
+        let queryResult: any = await Database.query(queryString);
+        let cards: Array<CardData> = [];
+        for (let i = 0; i < queryResult.length; i++) {
+            let cardData: CardData = {
+                id: queryResult[i].id,
+                presented: queryResult[i].presented,
+                hidden: queryResult[i].hidden
+            };
+        }
+        return cards;
     }
 }
 
