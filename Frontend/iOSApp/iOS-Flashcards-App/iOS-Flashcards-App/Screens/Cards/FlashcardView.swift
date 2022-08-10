@@ -47,7 +47,7 @@ struct FlashcardView: View {
                 .frame(width: geometry.size.width * 0.9, height: 210)
                 .background(Color.white, ignoresSafeAreaEdges: [])
                 .cornerRadius(12)
-                .shadow(radius: 15)
+                .shadow(radius: 5)
                 .rotation3DEffect(.degrees(cardRotation), axis: (x: 0, y: 1, z: 0))
                 .overlay {
                     RoundedRectangle(cornerRadius: 12)
@@ -63,7 +63,8 @@ struct FlashcardView: View {
                 )
             }
             .frame(width: geometry.size.width)
-        }
+        } // End of GeometryReader
+        .frame(height: 210)
     }
     
     // Right swipe (finger starts from the right and ends at the left)
