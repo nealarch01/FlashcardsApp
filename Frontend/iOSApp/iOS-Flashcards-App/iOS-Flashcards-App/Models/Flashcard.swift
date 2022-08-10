@@ -8,7 +8,7 @@
 import Foundation
 
 class Flashcard {
-    private(set) var id: Int
+    private(set) var id: UInt64
     private(set) var presentedText: String // The "concept" / title card
     private(set) var hiddenText: String // The description card
     
@@ -19,7 +19,7 @@ class Flashcard {
         self.hiddenText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
     }
     
-    public init(id: Int, presentedText: String, hiddenText: String) {
+    public init(id: UInt64, presentedText: String, hiddenText: String) {
         self.id = id
         self.presentedText = presentedText
         self.hiddenText = hiddenText
@@ -30,23 +30,23 @@ class Flashcard {
     // 2. Update locally
     // 3. Make API Request and update in the SQL database
     
-    public func updateHiddenText(newText: String) -> String {
+    public func updateHiddenText(newText: String) -> (Bool, String) {
         if newText.count >= 500 {
-            return "Hidden text must be less than 500 characters"
+            return (false, "Text must be less than 500 characters")
         }
-        return "Updated text!"
+        return (true, "Successfully updated card")
     }
     
-    public func updatePresentedText(newText: String) -> String {
+    public func updatePresentedText(newText: String) -> (Bool, String) {
         if newText.count >= 50 {
-            return "Presented text must be less than 300 characters"
+            return (false, "Presented text must be less than 300 characters")
         }
-        return "Updated text!"
+        return (true, "Successfully updated card")
     }
 }
 
 class FlashcardDecodable: Decodable {
-    var id: Int
+    var id: UInt64
     var presented: String
     var hidden: String
     
