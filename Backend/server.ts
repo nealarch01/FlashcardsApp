@@ -5,6 +5,7 @@ import express from "express";
 
 // Router imports
 import UserAuthenticationRouter from "./src/routes/user-authentication-router";
+import CardSetRouter from "./src/routes/card-set-router";
 
 const app = express();
 
@@ -21,10 +22,26 @@ app.get("/", (req: express.Request, res: express.Response) => {
     });
 });
 
+
+// Authentication routes
 app.use(UserAuthenticationRouter.loginRouter);
 app.use(UserAuthenticationRouter.registerRouter);
-app.use(UserAuthenticationRouter.checkTokenRouter);
-app.use(UserAuthenticationRouter.renewToken);
+
+// Card set routes
+app.use(CardSetRouter.getCardsInSet);
+app.use(CardSetRouter.createCardSet);
+app.use(CardSetRouter.deleteCardSet);
+app.use(CardSetRouter.updateTitle);
+app.use(CardSetRouter.updateDescription);
+
+app.get("/test/:id", async (req: express.Request, res: express.Response) => {
+    const authToken = req.headers.authorization || "";
+    const id = req.params.id;
+    console.log(authToken);
+    return res.send({
+        message: "Passed"
+    });
+});
 
 
 // For https
