@@ -4,7 +4,7 @@ import { Router } from "express";
 
 class CardSetRouter {
     // GET 
-    getCardsInSetRouter = Router().get("/card-set/:setID", CardSetController.getCardsInSet);
+    getCardsInSetRouter = Router().get("/card-set/cards/:setID", CardSetController.getCardsInSet);
 
     // GET
     getCardSetsFromCreatorRouter = Router().get("/card-set/:user_id", CardSetController.getCardSetsFromCreator);
@@ -25,7 +25,7 @@ class CardSetRouter {
     getCardSetsFromCreator = Router().get("/card-set/:user_id", CardSetController.getCardSetsFromCreator)
 
     // GET
-    getCardSetDataFromID = Router().get("/card-set/:setID", CardSetController.getCardSetMetaDataFromID)
+    getCardSetMetaDataFromID = Router().get("/card-set/metadata/:setID", CardSetController.getCardSetMetaDataFromID)
 
     // GET
     getCardsInSet = Router().get("/card-set/:setID", CardSetController.getCardsInSet)

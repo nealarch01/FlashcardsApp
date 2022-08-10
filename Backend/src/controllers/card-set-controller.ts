@@ -3,17 +3,18 @@ import { Request, Response } from "express";
 import AuthenticationToken from "../middlewares/authentication-token";
 import verifyRequestBody from "../middlewares/verify-request-body";
 
-import { GenericTypes as types } from "../utils/types";
+import { CardSetMetaData, GenericTypes as types } from "../utils/types";
 
 import CardSetModel from "../models/card-set-model";
 
 class CardSetController {
     // POST
+    // Create a new card set
     async createCardSet(req: Request, res: Response) {
         const authToken = req.headers.authorization;
         if (authToken === undefined) {
             return res.status(401).send({
-                message: "Authorization was not provided"
+                message: "Authentication was not provided"
             });
         }
         const reqBody = JSON.parse(req.body);
@@ -34,6 +35,8 @@ class CardSetController {
         });
     }
 
+    // DELETE
+    // Delete a card set
     async deleteCardSet(req: Request, res: Response) {
         const authToken = req.headers.authorization || "";
         if (!AuthenticationToken.isValid(authToken)) {
@@ -42,7 +45,7 @@ class CardSetController {
             });
         }
 
-        const setID = parseInt(req.params.set_id);
+        const setID = parseInt(req.params.setID);
         if (isNaN(setID)) {
             return res.status(400).send({
                 message: "Invalid setID format."
@@ -53,7 +56,7 @@ class CardSetController {
         const user_id = AuthenticationToken.decode(authToken);
         const ownedSets = await CardSetModel.getCardSetsFromCreator(user_id!);
         if (!ownedSets.some(set => set.id === setID)) {
-            return res.status(400).send({
+            return res.status(401).send({
                 message: "You do not own this set."
             });
         }
@@ -70,19 +73,225 @@ class CardSetController {
         });
     }
 
-
-    // GET 
-    async getCardsInSet(req: Request, res: Response) {
-        const setID = parseInt(req.params.set_id);
-        if (isNaN(setID)) {
+    // PUT
+    // Updates the title of a card set
+    async updateCardSetTitle(req: Request, res: Response) {
+        const authToken = req.headers.authorization || ""
+        if (authToken === "") {
             return res.status(400).send({
-                message: "Invalid set_id format."
+                message: "Authentication token was not provided."
             });
         }
-        const cards = await CardSetModel.getCardsInSet(setID);
+
+        if (!AuthenticationToken.isValid(authToken)) {
+            return res.status(400).send({
+                message: "Invalid authentication token."
+            });
+        }
+
+        const setID = parseInt(req.params.setID);
+
+        if (isNaN(setID)) {
+            return res.status(400).send({
+                message: "Invalid setID provided."
+            });
+        }
+
+        // Check if user owns the set
+        const user_id = AuthenticationToken.decode(authToken);
+        
+        if (!await CardSetModel.checkUserOwnership(user_id!, setID)) {
+            return res.status(400).send({
+                message: "You do not own this set."
+            });
+        }
+
+        const newTitle = req.body.title;
+        if (newTitle === undefined) {
+            return res.status(400).send({
+                message: "Invalid title provided."
+            });
+        }
+
+        if (newTitle.length > 32) {
+            return res.status(400).send({
+                message: "Title is too long. Must be less than 64 characters."
+            });
+        }
+
+        let updateStatus = await CardSetModel.updateTitle(setID, newTitle);
+        if (updateStatus === false) {
+            return res.status(500).send({
+                message: "Could not update title."
+            });
+        }
+        return res.status(200).send({
+            message: "Successfully updated title."
+        });
+    }
+
+    // PUT
+    // Updates the description of a card set
+    async updateCardSetDescription(req: Request, res: Response) {
+        const authToken = req.headers.authorization || "";
+        if (authToken === "") {
+            return res.status(400).send({
+                message: "Authentication token was not provided."
+            });
+        }
+
+        if (!AuthenticationToken.isValid(authToken)) {
+            return res.status(400).send({
+                message: "Invalid authentication token."
+            });
+        }
+
+        const setID = parseInt(req.params.setID);
+        if (isNaN(setID)) {
+            return res.status(400).send({
+                message: "Invalid setID format."
+            });
+        }
+
+        // Check if user owns the set
+        const user_id = AuthenticationToken.decode(authToken);
+        if (!await CardSetModel.checkUserOwnership(user_id!, setID)) {
+            return res.status(400).send({
+                message: "You do not own this set."
+            });
+        }
+
+        const newDescription = req.body.description;
+        if (newDescription === undefined) {
+            return res.status(400).send({
+                message: "Invalid description provided."
+            });
+        }
+
+        if (newDescription.length > 300) {
+            return res.status(400).send({
+                message: "Description is too long. Must be less than 300 characters."
+            });
+        }
+
+        let updateStatus = await CardSetModel.updateDescription(setID, newDescription);
+        if (updateStatus === false) {
+            return res.status(500).send({
+                message: "Could not update description."
+            });
+        }
+        return res.status(200).send({
+            message: "Successfully updated description."
+        });
     }
 
     // GET 
+    // Get the flashcards in a set
+    async getCardsInSet(req: Request, res: Response) {
+        console.log(req.params.setID);
+        const setID = parseInt(req.params.setID);
+
+        if (isNaN(setID)) {
+            return res.status(400).send({
+                message: "Invalid setID."
+            });
+        }
+
+        if (await CardSetModel.isCardSetPrivate(setID)) {
+            const authToken = req.headers.authorization || "";
+            if (!AuthenticationToken.isValid(authToken)) {
+                return res.status(401).send({
+                    message: "You do not have permission to view this set."
+                });
+            }
+            const user_id = AuthenticationToken.decode(authToken);
+            if (!await CardSetModel.checkUserOwnership(user_id!, setID)) {
+                return res.status(401).send({
+                    message: "You do not have permission to view this set."
+                });
+            }
+        }
+
+        if (isNaN(setID)) {
+            return res.status(400).send({
+                message: "Invalid setID format."
+            });
+        }
+        const cards = await CardSetModel.getCardsInSet(setID);
+        return res.status(200).send(cards);
+    }
+
+    // GET
+    async getCardSetsFromCreator(req: Request, res: Response) {
+        const userID = parseInt(req.params.userID);
+        if (isNaN(userID)) {
+            return res.status(400).send({
+                message: "Invalid userID."
+            });
+        }
+
+        const allCardSets = await CardSetModel.getCardSetsFromCreator(userID);
+
+        const authToken = req.headers.authorization || "";
+        
+        const receiverUserID = AuthenticationToken.decode(authToken);
+
+        if (receiverUserID === undefined || receiverUserID !== userID) {
+            let publicCardSets = allCardSets.filter((set: CardSetMetaData) => set.private === false);
+            return res.status(200).send(publicCardSets);
+        }
+
+        return res.status(200).send({
+            cardSets: allCardSets
+        });
+    }
+
+    // GET
+    async getCardSetMetaDataFromID(req: Request, res: Response) {
+        const setID = parseInt(req.params.setID);
+        console.log(setID);
+        if (isNaN(setID)) {
+            return res.status(400).send({
+                message: "Invalid setID format."
+            });
+        }
+
+        const isPrivate = await CardSetModel.isCardSetPrivate(setID);
+
+        if (isPrivate) {
+            // Check if the user has access to the set
+            const authToken = req.headers.authorization || "";
+            if (!AuthenticationToken.isValid(authToken)) {
+                return res.status(401).send({
+                    message: "You cannot view this set."
+                });
+            }
+        }
+
+        // If not private or the user has access, get the set metadata
+
+        const cardSet = await CardSetModel.getCardSetMetaDataFromID(setID);
+
+        if (cardSet === undefined) {
+            return res.status(404).send({
+                message: "Card set does not exist."
+            });
+        }
+
+        return res.status(200).send({
+            cardSet
+        });
+    }
+
+    // GET
+    // Obtains both meta data and cards of a set
+    async getCardSetDataFromID(req: Request, res: Response) {
+
+        // Test other controller methods before implementing
+        return res.status(501).send({
+            message: "Not implemented."
+        });
+    }
 }
 
 export default new CardSetController();

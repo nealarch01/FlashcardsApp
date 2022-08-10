@@ -21,6 +21,26 @@ class CardSetModel {
         return true;
     }
 
+    async updateTitle(card_set_id: number, newTitle: string): Promise<boolean> {
+        let queryString = `UPDATE card_set SET title = ? WHERE id = ${card_set_id};`;
+        let values: Array<string> = [newTitle];
+        let queryResult: any = await Database.safeQuery(queryString, values);
+        if (queryResult.affectedRows === 0) {
+            return false;
+        }
+        return true;
+    }
+
+    async updateDescription(card_set_id: number, newDescription: string): Promise<boolean> {
+        let queryString = `UPDATE card_set SET description = ? WHERE id = ${card_set_id};`;
+        let values: Array<string> = [newDescription];
+        let queryResult: any = await Database.safeQuery(queryString, values);
+        if (queryResult.affectedRows === 0) {
+            return false;
+        }
+        return true;
+    }
+
     async getCardSetMetaDataFromID(card_set_id: number): Promise<CardSetMetaData | undefined> {
         let queryString = `SELECT * FROM card_set WHERE id=${card_set_id};`;
         let queryResult: any = await Database.query(queryString);
@@ -112,8 +132,27 @@ class CardSetModel {
                 presented: queryResult[i].presented,
                 hidden: queryResult[i].hidden
             };
+            cards.push(cardData);
         }
         return cards;
+    }
+
+    async checkUserOwnership(card_set_id: number, user_id: number): Promise<boolean> {
+        let queryString = `SELECT * FROM card_set WHERE id=${card_set_id} AND creator_id=${user_id};`;
+        let queryResult: any = await Database.query(queryString);
+        if (queryResult.length === 0) {
+            return false;
+        }
+        return true;
+    }
+
+    async isCardSetPrivate(card_set_id: number): Promise<boolean> {
+        let queryString = `SELECT * FROM card_set WHERE id=${card_set_id} AND private=1;`;
+        const queryResult: any = await Database.query(queryString);
+        if (queryResult.length === 0) {
+            return false;
+        }
+        return true;
     }
 }
 
