@@ -7,10 +7,11 @@
 
 import Foundation
 
-class Flashcard {
+class Flashcard: ObservableObject {
     private(set) var id: UInt64
-    private(set) var presentedText: String // The "concept" / title card
-    private(set) var hiddenText: String // The description card
+    // Make text Published to allow UI changes / updates when a card is modified
+    @Published private(set) var presentedText: String // The "concept" / title card
+    @Published private(set) var hiddenText: String // The description card
     
     // Default constructor
     public init() {
