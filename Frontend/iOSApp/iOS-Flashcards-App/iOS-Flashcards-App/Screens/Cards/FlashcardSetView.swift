@@ -15,7 +15,7 @@ struct FlashcardSetView: View {
     @State private var editModeOn: Bool = false
     
     var body: some View {
-        NavigationView {
+        ZStack {
             ScrollView(.vertical, showsIndicators: true) {
                 VStack {
                     HStack {
@@ -26,7 +26,7 @@ struct FlashcardSetView: View {
                     }
                     Rectangle()
                         .fill(Color.gray)
-                        .frame(width: .infinity, height: 2)
+                        .frame(height: 2)
                         .padding([.bottom])
                 }
                 VStack(spacing: 50) {
@@ -34,14 +34,15 @@ struct FlashcardSetView: View {
                         HStack {
                             FlashcardView(flashcardData: card)
                             if (editModeOn) {
-                                Button(action: {}) {
+                                NavigationLink(destination: FlashcardOptionView(flashcardData: card)) {
                                     Image(systemName: "chevron.right")
                                         .font(.system(size: 28))
                                         .foregroundColor(Color.white)
                                         .frame(width: 50, height: 70)
                                         .background(Color.blue)
                                         .cornerRadius(12)
-                                }.padding([.trailing])
+                                        .padding([.trailing])
+                                }
                             }
                         }
                     }

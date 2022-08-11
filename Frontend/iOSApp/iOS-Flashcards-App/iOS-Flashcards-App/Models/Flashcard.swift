@@ -8,6 +8,9 @@
 import Foundation
 
 class Flashcard: ObservableObject {
+    static public let presentedMax: Int = 50 // 50 Characters max
+    static public let hiddenMax: Int = 500
+    
     private(set) var id: UInt64
     // Make text Published to allow UI changes / updates when a card is modified
     @Published private(set) var presentedText: String // The "concept" / title card
@@ -32,14 +35,14 @@ class Flashcard: ObservableObject {
     // 3. Make API Request and update in the SQL database
     
     public func updateHiddenText(newText: String) -> (Bool, String) {
-        if newText.count >= 500 {
+        if newText.count >= Flashcard.hiddenMax {
             return (false, "Text must be less than 500 characters")
         }
         return (true, "Successfully updated card")
     }
     
     public func updatePresentedText(newText: String) -> (Bool, String) {
-        if newText.count >= 50 {
+        if newText.count >= Flashcard.presentedMax {
             return (false, "Presented text must be less than 300 characters")
         }
         return (true, "Successfully updated card")

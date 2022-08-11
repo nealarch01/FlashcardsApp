@@ -13,12 +13,28 @@ struct HomeView: View {
     var body: some View {
         TabView {
             VStack(spacing: 20) {
-                Text("Currently logged in")
-                    .font(.system(size: 26, weight: .bold))
-                Button(action: {
-                    viewModel.logout(user)
-                }) {
-                    Text("Click here to logout")
+                NavigationView {
+                    VStack {
+                        NavigationLink(destination: FlashcardSetView(flashcardSet: FlashcardSet())) {
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.blue, lineWidth: 2)
+                                .frame(width: 200, height: 200)
+                                .shadow(radius: 12)
+                                .overlay(alignment: .bottom) {
+                                    Text("My Sets")
+                                        .font(.system(size: 32, weight: .medium))
+                                        .foregroundColor(Color.blue)
+                                        .padding([.bottom], 20)
+                                }
+                        }
+                        Button(action: {
+                            viewModel.logout(user)
+                        }) {
+                            Text("Click here to logout")
+                                .font(.system(size: 24))
+                        }
+                        .padding()
+                    }
                 }
             }
             .tabItem {
