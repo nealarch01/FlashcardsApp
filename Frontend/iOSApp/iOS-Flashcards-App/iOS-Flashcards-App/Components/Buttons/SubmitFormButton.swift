@@ -22,7 +22,7 @@ struct SubmitFormButton: View {
                 .font(.system(size: 26, weight: .medium))
                 .foregroundColor(Color.appWhite)
                 .frame(width: 310, height: 60)
-                .background(Color.queenBlue)
+                .background(Color.blue)
                 .cornerRadius(12)
         }.overlay(alignment: .trailing) {
             if showLoadingIndicator == true {

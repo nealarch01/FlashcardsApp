@@ -21,7 +21,7 @@ struct PageHeader: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .background(Color.queenBlue)
+        .background(Color.blue)
     }
 }
 

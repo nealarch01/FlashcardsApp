@@ -40,13 +40,12 @@ struct AuthenticationView: View {
                     }) {
                         Text("Sign in")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(Color.carolinaBlue)
+                            .foregroundColor(Color(hex: 0x004BA8))
                     }
                 }.padding([.top], 10)
             } else { // Login page
                 PageHeader(title: "Login")
                 CaptionedTextField(caption: "Username/Email", text: $viewModel.loginFormData.userIdentifier, placeholder: "Enter username or email")
-                    .padding([.top], 10)
                 ViewableSecureField(caption: "Password", text: $viewModel.loginFormData.password, placeholder: "Enter password")
                 if viewModel.errorMessage != "" {
                     Text(viewModel.errorMessage)
@@ -72,7 +71,7 @@ struct AuthenticationView: View {
                     }) {
                         Text("Sign up")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(Color.carolinaBlue)
+                            .foregroundColor(Color(hex: 0x3E78B2))
                     }
                 }.padding([.top], 10)
             }

@@ -26,7 +26,7 @@ struct SearchView: View {
                     )
                     .frame(width: geo.size.width * 0.9, height: 45)
                     .overlay(RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.carolinaBlue, lineWidth: 2))
+                        .stroke(Color.blue, lineWidth: 2))
                     .frame(width: geo.size.width)
             }
             Spacer()
