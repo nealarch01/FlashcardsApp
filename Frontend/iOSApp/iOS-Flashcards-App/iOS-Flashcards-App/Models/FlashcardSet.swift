@@ -14,7 +14,7 @@ class FlashcardSet: ObservableObject {
     @Published private(set) var description: String
     private(set) var created_at: String
     private(set) var isPrivate: Bool
-    @Published private(set) var cards: Array<Flashcard>
+    @Published public var cards: Array<Flashcard>
     
     
     init() {

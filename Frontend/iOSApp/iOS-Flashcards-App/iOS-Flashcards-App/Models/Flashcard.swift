@@ -34,14 +34,19 @@ class Flashcard: ObservableObject {
     // 2. Update locally
     // 3. Make API Request and update in the SQL database
     
-    public func updateHiddenText(newText: String) -> (Bool, String) {
+    public func updateText(newPresented: String, newHidden: String) {
+        self.presentedText = newPresented
+        self.hiddenText = newHidden
+    }
+    
+    public func hiddenTextValid(newText: String) -> (successful: Bool, message: String) {
         if newText.count >= Flashcard.hiddenMax {
             return (false, "Text must be less than 500 characters")
         }
         return (true, "Successfully updated card")
     }
     
-    public func updatePresentedText(newText: String) -> (Bool, String) {
+    public func presentedTextValid(newText: String) -> (successful: Bool, message: String) {
         if newText.count >= Flashcard.presentedMax {
             return (false, "Presented text must be less than 300 characters")
         }

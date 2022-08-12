@@ -15,7 +15,6 @@ struct FlashcardSetView: View {
     @State private var expandOptions: Bool = false
     @State private var editModeOn: Bool = false
     
-    
     var body: some View {
         ZStack {
             ScrollView(.vertical, showsIndicators: true) {
@@ -37,11 +36,7 @@ struct FlashcardSetView: View {
                             FlashcardView(flashcardData: viewModel.flashcardSet.cards[index])
                             if (editModeOn) {
                                 NavigationLink (
-                                    destination: FlashcardOptionView(
-                                        flashcardData: viewModel.flashcardSet.cards[index],
-                                        newPresented: $viewModel.newPresented,
-                                        newHidden: $viewModel.newHidden
-                                    )) {
+                                    destination: FlashcardOptionView(flashcardData: viewModel.flashcardSet.cards[index])) {
                                         Image(systemName: "chevron.right")
                                             .font(.system(size: 28))
                                             .foregroundColor(Color.white)
