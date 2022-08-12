@@ -137,8 +137,8 @@ class CardSetModel {
         return cards;
     }
 
-    async checkUserOwnership(card_set_id: number, user_id: number): Promise<boolean> {
-        let queryString = `SELECT * FROM card_set WHERE id=${card_set_id} AND creator_id=${user_id};`;
+    async checkUserOwnership(set_id: number, user_id: number): Promise<boolean> {
+        let queryString = `SELECT * FROM card_set WHERE id=${set_id} AND creator_id=${user_id};`;
         let queryResult: any = await Database.query(queryString);
         if (queryResult.length === 0) {
             return false;

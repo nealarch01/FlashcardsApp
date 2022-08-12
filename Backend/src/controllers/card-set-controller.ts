@@ -76,12 +76,15 @@ class CardSetController {
     // PUT
     // Updates the title of a card set
     async updateCardSetTitle(req: Request, res: Response) {
-        const authToken = req.headers.authorization || ""
+        // Expects: { "title": "..." }
+        let authToken = req.headers.authorization || ""
         if (authToken === "") {
             return res.status(400).send({
                 message: "Authentication token was not provided."
             });
         }
+
+        authToken = authToken.replace("Bearer ", "");
 
         if (!AuthenticationToken.isValid(authToken)) {
             return res.status(400).send({
@@ -99,17 +102,21 @@ class CardSetController {
 
         // Check if user owns the set
         const user_id = AuthenticationToken.decode(authToken);
+
+        console.log(user_id);
+        console.log(setID);
         
-        if (!await CardSetModel.checkUserOwnership(user_id!, setID)) {
+        if (!await CardSetModel.checkUserOwnership(setID, user_id!)) {
             return res.status(400).send({
                 message: "You do not own this set."
             });
         }
 
-        const newTitle = req.body.title;
+        const newTitle = JSON.parse(req.body).title;
+
         if (newTitle === undefined) {
             return res.status(400).send({
-                message: "Invalid title provided."
+                message: "`Title` was not provided."
             });
         }
 
@@ -224,6 +231,7 @@ class CardSetController {
     // GET
     async getCardSetsFromCreator(req: Request, res: Response) {
         const userID = parseInt(req.params.userID);
+        console.log(userID);
         if (isNaN(userID)) {
             return res.status(400).send({
                 message: "Invalid userID."
@@ -236,6 +244,7 @@ class CardSetController {
         
         const receiverUserID = AuthenticationToken.decode(authToken);
 
+        // Do not return private sets if the requester is not the creator
         if (receiverUserID === undefined || receiverUserID !== userID) {
             let publicCardSets = allCardSets.filter((set: CardSetMetaData) => set.private === false);
             return res.status(200).send(publicCardSets);
@@ -249,7 +258,6 @@ class CardSetController {
     // GET
     async getCardSetMetaDataFromID(req: Request, res: Response) {
         const setID = parseInt(req.params.setID);
-        console.log(setID);
         if (isNaN(setID)) {
             return res.status(400).send({
                 message: "Invalid setID format."
