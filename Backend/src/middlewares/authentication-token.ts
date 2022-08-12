@@ -24,7 +24,7 @@ class AuthenticationToken {
     isExpired(authToken: string): boolean {
         try {
             let decoded: any = jwt.verify(authToken, Secrets.jwt_secret);
-            let currentTime = new Date().getTime();
+            let currentTime = new Date().getTime() / 1000;
             if (currentTime >= decoded.exp) {
                 return true;
             }
