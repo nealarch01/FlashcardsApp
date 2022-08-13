@@ -3,6 +3,12 @@ import jwt from "jsonwebtoken";
 import Secrets from "../configs/secrets.json";
 
 class AuthenticationToken {
+    private removeBearer(authToken: string): string {
+        if (authToken.startsWith("Bearer ")) {
+            return authToken.replace("Bearer ", "");
+        }
+        return authToken;
+    }
     create(user_id: number): string {
         // For testing purposes, we will set the expiration to 1 day
         // Change this later
@@ -10,6 +16,7 @@ class AuthenticationToken {
     }
 
     decode(authToken: string): number | undefined {
+        authToken = this.removeBearer(authToken);
         try {
             let user_id: number;
             const decoded: any = jwt.verify(authToken, Secrets.jwt_secret);
@@ -22,6 +29,7 @@ class AuthenticationToken {
 
     // Method that determines if a json web token has expired
     isExpired(authToken: string): boolean {
+        authToken = this.removeBearer(authToken);
         try {
             let decoded: any = jwt.verify(authToken, Secrets.jwt_secret);
             let currentTime = new Date().getTime() / 1000;
@@ -36,6 +44,7 @@ class AuthenticationToken {
 
     // Checks if a token can be decoded
     isDecodable(authToken: string): boolean {
+        authToken = this.removeBearer(authToken);
         try {
             jwt.verify(authToken, Secrets.jwt_secret);
             return true;
@@ -45,6 +54,7 @@ class AuthenticationToken {
     }
 
     isValid(authToken: string): boolean {
+        authToken = this.removeBearer(authToken);
         try {
             let decoded: any = jwt.verify(authToken, Secrets.jwt_secret);
             if (this.isExpired(authToken)) {
