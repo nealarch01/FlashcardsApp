@@ -12,19 +12,41 @@ struct HomeView: View {
     @StateObject private var viewModel = ViewModel()
     var body: some View {
         TabView {
-            VStack(spacing: 20) {
-                NavigationView {
-                    VStack {
+            NavigationView {
+                GeometryReader { geometry in
+                    VStack(spacing: 40) {
                         NavigationLink(destination: FlashcardSetView(flashcardSet: FlashcardSet())) {
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.blue, lineWidth: 2)
-                                .frame(width: 200, height: 200)
+                                .fill(Color.blue)
+                                .frame(width: geometry.size.width * 0.8, height: 100)
                                 .shadow(radius: 12)
-                                .overlay(alignment: .bottom) {
+                                .overlay(alignment: .center) {
                                     Text("My Sets")
-                                        .font(.system(size: 32, weight: .medium))
-                                        .foregroundColor(Color.blue)
-                                        .padding([.bottom], 20)
+                                        .font(.system(size: 32, weight: .semibold))
+                                        .foregroundColor(Color.white)
+                                }
+                        }
+                        .padding([.top], 10)
+                        NavigationLink(destination: FlashcardSetView(flashcardSet: FlashcardSet())) {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.pink)
+                                .frame(width: geometry.size.width * 0.8, height: 100)
+                                .shadow(radius:12)
+                                .overlay(alignment: .center) {
+                                    Text("Saved Sets")
+                                        .font(.system(size: 32, weight: .semibold))
+                                        .foregroundColor(Color.white)
+                                }
+                        }
+                        NavigationLink(destination: FlashcardSetView(flashcardSet: FlashcardSet())) {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.green)
+                                .frame(width: geometry.size.width * 0.8, height: 100)
+                                .shadow(radius:12)
+                                .overlay(alignment: .center) {
+                                    Text("Collaborated Sets")
+                                        .font(.system(size: 32, weight: .semibold))
+                                        .foregroundColor(Color.white)
                                 }
                         }
                         Button(action: {
@@ -33,10 +55,13 @@ struct HomeView: View {
                             Text("Click here to logout")
                                 .font(.system(size: 24))
                         }
-                        .padding()
-                    }
-                }
-            }
+                    } // End of VStack
+                    .frame(width: geometry.size.width) // Center the views horizontally inside GeometryReader
+                    .navigationTitle("Home")
+                    .navigationBarTitleDisplayMode(.inline)
+                } // End of Geometry Reader
+            } // End of NavigationView
+            
             .tabItem {
                 Image(systemName: "house")
                 Text("Home")
