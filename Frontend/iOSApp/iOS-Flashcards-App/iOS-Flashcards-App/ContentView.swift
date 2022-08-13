@@ -12,7 +12,9 @@ struct ContentView: View {
     @StateObject private var viewModel = ViewModel()
     var body: some View {
         ZStack {
-            if !viewModel.userLoggedIn(user)  {
+            Color.appWhite
+                .ignoresSafeArea(edges: [.all]) // Global background color
+            if !viewModel.userLoggedIn(user)  { // This will cause Canvas to crash but when ran on Simulator, won't crash
                 AuthenticationView()
             } else {
                 HomeView()
