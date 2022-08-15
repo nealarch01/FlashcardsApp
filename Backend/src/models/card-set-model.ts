@@ -3,7 +3,7 @@ import Database from "./database";
 import { CardSetMetaData, CardData } from "../utils/types";
 
 class CardSetModel {
-    // Return the insert id of the newly created card set
+    // Creates a new card set and returns its ID
     async createCardSet(creator_id: number, title: string, description: string): Promise<number> {
         let queryString = `INSERT INTO card_set (creator_id, title, description, created_at) VALUES (?, ?, ?, ?, NOW());`;
         let values: Array<any> = [creator_id, title, description];
@@ -11,9 +11,9 @@ class CardSetModel {
         return queryResult.insertId;
     }
 
-
-    async deleteCardSet(card_set_id: number): Promise<boolean> {
-        let queryString = `DELETE FROM card_set WHERE id=${card_set_id};`;
+    // Deletes a flashcard set
+    async deleteCardSet(setID: number): Promise<boolean> {
+        let queryString = `DELETE FROM card_set WHERE id=${setID};`;
         let queryResult: any = await Database.query(queryString);
         if (queryResult.affectedRows === 0) {
             return false;
@@ -21,8 +21,9 @@ class CardSetModel {
         return true;
     }
 
-    async updateTitle(card_set_id: number, newTitle: string): Promise<boolean> {
-        let queryString = `UPDATE card_set SET title = ? WHERE id = ${card_set_id};`;
+    // Updates the title of a flashcard set
+    async updateTitle(setID: number, newTitle: string): Promise<boolean> {
+        let queryString = `UPDATE card_set SET title = ? WHERE id=${setID};`;
         let values: Array<string> = [newTitle];
         let queryResult: any = await Database.safeQuery(queryString, values);
         if (queryResult.affectedRows === 0) {
@@ -31,8 +32,9 @@ class CardSetModel {
         return true;
     }
 
-    async updateDescription(card_set_id: number, newDescription: string): Promise<boolean> {
-        let queryString = `UPDATE card_set SET description = ? WHERE id = ${card_set_id};`;
+    // Updates the description of a flashcard set.
+    async updateDescription(setID: number, newDescription: string): Promise<boolean> {
+        let queryString = `UPDATE card_set SET description = ? WHERE id = ${setID};`;
         let values: Array<string> = [newDescription];
         let queryResult: any = await Database.safeQuery(queryString, values);
         if (queryResult.affectedRows === 0) {
@@ -41,8 +43,9 @@ class CardSetModel {
         return true;
     }
 
-    async getCardSetMetaDataFromID(card_set_id: number): Promise<CardSetMetaData | undefined> {
-        let queryString = `SELECT * FROM card_set WHERE id=${card_set_id};`;
+    // Returns the meta data (title, description, created_at) of a flashcard set. This excludes the cards in the set.
+    async getCardSetMetaDataFromID(setID: number): Promise<CardSetMetaData | undefined> {
+        let queryString = `SELECT * FROM card_set WHERE id=${setID};`;
         let queryResult: any = await Database.query(queryString);
         if (queryResult.length === 0) {
             return undefined;
@@ -58,6 +61,7 @@ class CardSetModel {
         return cardSetMetadata;
     }
 
+    // Returns the card sets created by a specified user.
     async getCardSetsFromCreator(creator_id: number): Promise<Array<CardSetMetaData>> {
         let queryString = `SELECT * FROM card_set WHERE creator_id=${creator_id};`;
         let queryResult: any = await Database.query(queryString);
@@ -76,6 +80,7 @@ class CardSetModel {
         return cardSetMetadata;
     }
 
+    // Searches for cards with a similar title.
     async searchCardSetFromTitle(title: string): Promise<CardSetMetaData | undefined> {
         let queryString = `SELECT * FROM card_set WHERE title LIKE ?;`;
         let values: Array<string> = [title];
@@ -94,8 +99,9 @@ class CardSetModel {
         return cardSetMetadata;
     }
 
-    async transferCardSetOwnership(creator_id: number, card_set_id: number, new_creator_id: number): Promise<boolean> {
-        let queryString = `UPDATE card_set SET creator_id=${new_creator_id} WHERE id=${card_set_id};`;
+    // Transfers ownership from one owner to another.
+    async transferCardSetOwnership(creator_id: number, setID: number, new_creator_id: number): Promise<boolean> {
+        let queryString = `UPDATE card_set SET creator_id=${new_creator_id} WHERE id=${setID};`;
         let queryResult: any = await Database.query(queryString);
         if (queryResult.affectedRows === 0) {
             return false;
@@ -103,8 +109,9 @@ class CardSetModel {
         return true;
     }
 
-    async addCardToSet(card_set_id: number, card_id: number): Promise<boolean> {
-        let queryString = `INSERT INTO set_data (set_id, card_id) VALUES (${card_set_id}, ${card_id}));`;
+    // Creates a new card and adds it into a flashcard set.
+    async addCardToSet(setID: number, card_id: number): Promise<boolean> {
+        let queryString = `INSERT INTO set_data (set_id, card_id) VALUES (${setID}, ${card_id}));`;
         let queryResult: any = await Database.query(queryString);
         if (queryResult.affectedRows === 0) {
             return false;
@@ -112,8 +119,9 @@ class CardSetModel {
         return true;
     }
 
-    async removeCardFromSet(card_set_id: number, card_id: number): Promise<boolean> {
-        let queryString = `DELETE FROM set_data WHERE set_id = ${card_set_id} AND card_id = ${card_id};`;
+    // Deletes a card from a flashcard set.
+    async removeCardFromSet(setID: number, card_id: number): Promise<boolean> {
+        let queryString = `DELETE FROM set_data WHERE set_id = ${setID} AND card_id = ${card_id};`;
         let queryResult: any = await Database.query(queryString);
         if (queryResult.affectedRows === 0) {
             return false;
@@ -121,7 +129,7 @@ class CardSetModel {
         return true;
     }
 
-
+    // Gets all cards in a flashcard set.
     async getCardsInSet(set_id: number): Promise<Array<CardData>> {
         let queryString = `SELECT * FROM card WHERE id IN (SELECT card_id from set_data WHERE set_id=${set_id});`;
         let queryResult: any = await Database.query(queryString);
@@ -137,6 +145,7 @@ class CardSetModel {
         return cards;
     }
 
+    // Checks if a flashcard set is owned by a specific user.
     async checkUserOwnership(set_id: number, user_id: number): Promise<boolean> {
         let queryString = `SELECT * FROM card_set WHERE id=${set_id} AND creator_id=${user_id};`;
         let queryResult: any = await Database.query(queryString);
@@ -146,10 +155,31 @@ class CardSetModel {
         return true;
     }
 
-    async isCardSetPrivate(card_set_id: number): Promise<boolean> {
-        let queryString = `SELECT * FROM card_set WHERE id=${card_set_id} AND private=1;`;
+    // Determines whether a flashcard set is private.
+    async isCardSetPrivate(setID: number): Promise<boolean> {
+        let queryString = `SELECT * FROM card_set WHERE id=${setID} AND private=1;`;
         const queryResult: any = await Database.query(queryString);
         if (queryResult.length === 0) {
+            return false;
+        }
+        return true;
+    }
+
+    // Makes a flashcard set private.
+    async makePrivate(setID: number): Promise<boolean> {
+        let queryString = `UPDATE card_set SET private=1 WHERE id=${setID};`;
+        let queryResult: any = await Database.query(queryString);
+        if (queryResult.affectedRows === 0) {
+            return false;
+        }
+        return true;
+    }
+
+    // Makes a flashcard set public.
+    async makePublic(setID: number): Promise<boolean> {
+        let queryString = `UPDATE card_set SET private=0 WHERE id=${setID};`;
+        let queryResult: any = await Database.query(queryString);
+        if (queryResult.affectedRows === 0) {
             return false;
         }
         return true;
