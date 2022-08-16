@@ -9,10 +9,8 @@ import Foundation
 
 extension ContentView {
     @MainActor class ViewModel: ObservableObject {
-        @Published var user: User?
-        
-        public func userLoggedIn(_ u: User) -> Bool {
-            if u.authToken == "" {
+        public func userLoggedIn(_ user: User) -> Bool {
+            if user.authToken == "" {
                 return false
             }
             return true
