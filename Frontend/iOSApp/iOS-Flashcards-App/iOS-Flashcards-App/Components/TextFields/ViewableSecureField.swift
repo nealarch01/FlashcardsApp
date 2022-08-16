@@ -43,10 +43,15 @@ struct ViewableSecureField: View {
                             .disableAutocorrection(true)
                     }
                 }.overlay(alignment: .trailing) {
-                    Image(systemName: isSecure == true ? "eye.slash" : "eye")
-                        .onTapGesture {
-                            isSecure.toggle()
-                        }.padding([.trailing], 10)
+                    Button(action: {
+                        isSecure.toggle()
+                    }) {
+                        Image(systemName: isSecure == true ? "eye.slash" : "eye")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(Color.black)
+                            .padding([.leading, .trailing], 10)
+                            .frame(height: 45)
+                    }
                 }
             }
             .padding([.top, .bottom], 5)
