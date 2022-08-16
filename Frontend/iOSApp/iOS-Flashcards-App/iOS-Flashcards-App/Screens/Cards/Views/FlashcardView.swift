@@ -12,18 +12,17 @@ struct FlashcardView: View {
     
     private let shortString: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
     private let longString: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-    
     @State private var isPresentedShown: Bool = true // True by default
     
     @State private var translation: CGSize = .zero
     @State private var cardRotation: Double = 0.0
     @State private var textRotation: Double = 0.0 // This is necessary. Without this, the text will be shown backwards
-    
+    // (flashcardData.hiddenText.count - (210 / 2)) <= 0 ? 10 : 210 / 2
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 ZStack { // ZStack to rotate
-                    ZStack {
+                    VStack {
                         if isPresentedShown == true {
                             Text(flashcardData.presentedText)
                                 .font(.system(size: 28, weight: .semibold))
@@ -31,14 +30,18 @@ struct FlashcardView: View {
                                 .padding()
                                 .multilineTextAlignment(.center)
                         } else {
-                            ScrollView {
-                                Text(flashcardData.hiddenText)
-                                    .font(.system(size: 22, weight: .regular))
-                                    .lineLimit(nil)
-                                    .padding()
-                                    .multilineTextAlignment(.leading)
+                            GeometryReader { geometryScroll in
+                                ScrollView(.vertical) {
+                                    Text(flashcardData.hiddenText)
+                                        .font(.system(size: 22, weight: .regular))
+                                        .lineLimit(nil)
+                                        .multilineTextAlignment(.leading)
+                                        .padding()
+                                        .frame(width: geometryScroll.size.width)
+                                        .frame(minHeight: geometryScroll.size.height) // Center
+                                }
+                                .clipped()
                             }
-                            .clipped()
                         }
                     }
                     .rotation3DEffect(.degrees(textRotation), axis: (x: 0, y: 1, z: 0))
