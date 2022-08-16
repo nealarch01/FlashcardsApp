@@ -5,8 +5,8 @@ import { CardSetMetaData, CardData } from "../utils/types";
 class CardSetModel {
     // Creates a new card set and returns its ID
     async createCardSet(creator_id: number, title: string, description: string): Promise<number> {
-        let queryString = `INSERT INTO card_set (creator_id, title, description, created_at) VALUES (?, ?, ?, ?, NOW());`;
-        let values: Array<any> = [creator_id, title, description];
+        let queryString = `INSERT INTO card_set (creator_id, title, description, created_at) VALUES (${creator_id}, ?, ?, NOW());`;
+        let values: Array<any> = [title, description];
         let queryResult: any = await Database.safeQuery(queryString, values);
         return queryResult.insertId;
     }

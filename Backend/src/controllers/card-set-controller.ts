@@ -11,9 +11,9 @@ class CardSetController {
     // POST
     // Create a new card set
     async createCardSet(req: Request, res: Response) {
-        const authToken = req.headers.authorization;
-        if (authToken === undefined) {
-            return res.status(401).send({
+        const authToken = req.headers.authorization || "";
+        if (authToken === "") {
+            return res.status(400).send({
                 message: "Authentication was not provided"
             });
         }
@@ -103,8 +103,8 @@ class CardSetController {
         // Check if user owns the set
         const user_id = AuthenticationToken.decode(authToken);
 
-        console.log(user_id);
-        console.log(setID);
+        // console.log(user_id);
+        // console.log(setID);
         
         if (!await CardSetModel.checkUserOwnership(setID, user_id!)) {
             return res.status(400).send({
@@ -195,7 +195,7 @@ class CardSetController {
     // GET 
     // Get the flashcards in a set
     async getCardsInSet(req: Request, res: Response) {
-        console.log(req.params.setID);
+        // console.log(req.params.setID);
         const setID = parseInt(req.params.setID);
 
         if (isNaN(setID)) {
@@ -231,7 +231,7 @@ class CardSetController {
     // GET
     async getCardSetsFromCreator(req: Request, res: Response) {
         const userID = parseInt(req.params.userID);
-        console.log(userID);
+        // console.log(userID);
         if (isNaN(userID)) {
             return res.status(400).send({
                 message: "Invalid userID."
@@ -299,6 +299,80 @@ class CardSetController {
         return res.status(501).send({
             message: "Not implemented."
         });
+    }
+
+    // PUT
+    async makePrivate(req: Request, res: Response) {
+        let authToken = req.headers.authorization || "";
+        if (authToken === "") {
+            return res.status(400).send({
+                message: "Authentication token was not provided."
+            });
+        }
+        let setID = parseInt(req.params.setID);
+        if (isNaN(setID)) {
+            return res.status(400).send({
+                message: "Invalid SetID."
+            });
+        }
+
+        if (!AuthenticationToken.isValid(authToken)) {
+            return res.status(400).send({
+                message: "Invalid authentication token."
+            });
+        }
+
+        const user_id = AuthenticationToken.decode(authToken);
+        if (!await CardSetModel.checkUserOwnership(user_id!, setID)) {
+            return res.status(401).send({
+                message: "You do not own this set."
+            });
+        }
+        const updateStatus = await CardSetModel.makePrivate(setID);
+        if (updateStatus === false) {
+            return res.status(500).send({
+                message: "Could not make set private. Try again."
+            });
+        }
+
+        return res.status(200).send({
+            message: "Successfully updated card set!"
+        });
+    }
+
+    // PUT
+    async makePublic(req: Request, res: Response) {
+        let authToken = req.headers.authorization || "";
+        if (authToken === "") {
+            return res.status(400).send({
+                message: "Authentication token was not provided."
+            });
+        }
+        let setID = parseInt(req.params.setID);
+        if (isNaN(setID)) {
+            return res.status(400).send({
+                message: "Invalid setID"
+            });
+        }
+
+        if (!AuthenticationToken.isValid(authToken)) {
+            return res.status(400).send({
+                message: "Invalid authentication token."
+            });
+        }
+
+        const user_id = AuthenticationToken.decode(authToken);
+        if (!await CardSetModel.checkUserOwnership(user_id!, setID)) {
+            return res.status(401).send({
+                message: "You do not own this set."
+            });
+        }
+        const updateStatus = await CardSetModel.makePublic(setID);
+        if (updateStatus === false) {
+            return res.status(500).send({
+                message: "Could not make set public. Try again."
+            });
+        }
     }
 }
 
