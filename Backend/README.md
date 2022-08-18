@@ -2,7 +2,7 @@
 - Created with Node.js with Express framework using TypeScript
 - Database: Relational Database using MySQL
 
-### Note: authentication is incomplete, OAuth will be used for authentication but that will be implemented later..
+### Note: authentication is incomplete, OAuth will be used for authentication but that will be implemented later. As of right now, JSON Web Tokens (JWTs) will be utilized.
 ## Database Diagram
 ![diagram-img](./assets/diagram-screenshot.png)
 
@@ -124,7 +124,18 @@ CREATE TABLE set_topics (
 
 
 ### Endpoints (an incomplete list):
-POST /auth/login \
-POST /auth/register \
 
-GET /card/:id
+#### Authentication
+POST /auth/login \
+POST /auth/register 
+
+
+
+#### Flashcard Set
+GET /card-set/cards/:setID \
+GET /card-set/metadata/:setID \ 
+GET /card-set/creator/:userID \
+POST /card-set/create \ 
+DELETE /card-set/delete/:setID \
+PUT /card-set/update-title/:setID \
+PUT /card-set/update-description/:setID 
