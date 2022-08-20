@@ -35,6 +35,14 @@ class CardSetController {
         });
     }
 
+
+
+
+
+
+
+
+
     // DELETE
     // Delete a card set
     async deleteCardSet(req: Request, res: Response) {
@@ -72,6 +80,14 @@ class CardSetController {
             message: "Card set could not be deleted."
         });
     }
+
+
+
+
+
+
+
+
 
     // PUT
     // Updates the title of a card set
@@ -137,6 +153,15 @@ class CardSetController {
         });
     }
 
+
+
+
+
+
+
+
+
+
     // PUT
     // Updates the description of a card set
     async updateCardSetDescription(req: Request, res: Response) {
@@ -192,6 +217,15 @@ class CardSetController {
         });
     }
 
+
+
+
+
+
+
+
+
+
     // GET 
     // Get the flashcards in a set
     async getCardsInSet(req: Request, res: Response) {
@@ -228,6 +262,15 @@ class CardSetController {
         return res.status(200).send(cards);
     }
 
+
+
+
+
+
+
+
+
+
     // GET
     async getCardSetsFromCreator(req: Request, res: Response) {
         const userID = parseInt(req.params.userID);
@@ -254,6 +297,14 @@ class CardSetController {
             cardSets: allCardSets
         });
     }
+
+
+
+
+
+
+
+
 
     // GET
     async getCardSetMetaDataFromID(req: Request, res: Response) {
@@ -290,6 +341,13 @@ class CardSetController {
             cardSet
         });
     }
+
+
+
+
+
+
+
 
     // GET
     // Obtains both meta data and cards of a set
@@ -340,6 +398,12 @@ class CardSetController {
         });
     }
 
+
+
+
+
+
+
     // PUT
     async makePublic(req: Request, res: Response) {
         let authToken = req.headers.authorization || "";
@@ -374,6 +438,11 @@ class CardSetController {
             });
         }
     }
+
+
+
+
 }
+
 
 export default new CardSetController();
