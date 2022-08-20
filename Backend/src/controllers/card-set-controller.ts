@@ -293,14 +293,32 @@ class CardSetController {
             return res.status(200).send(publicCardSets);
         }
 
-        return res.status(200).send({
-            cardSets: allCardSets
-        });
+        return res.status(200).send(allCardSets);
     }
 
 
 
 
+    // GET 
+    async getOwnedSets(req: Request, res: Response) {
+        const authToken = req.headers.authorization || "";
+        if (authToken === "") {
+            return res.status(400).send({
+                message: "Authentication token was not provided."
+            });
+        }
+
+        if (!AuthenticationToken.isValid(authToken)) {
+            return res.status(400).send({
+                message: "Invalid authentication token."
+            });
+        }
+
+        const user_id = AuthenticationToken.decode(authToken);
+
+        const ownedSets = await CardSetModel.getCardSetsFromCreator(user_id!);
+        return res.status(200).send(ownedSets);
+    }
 
 
 
@@ -337,9 +355,7 @@ class CardSetController {
             });
         }
 
-        return res.status(200).send({
-            cardSet
-        });
+        return res.status(200).send(cardSet);
     }
 
 
