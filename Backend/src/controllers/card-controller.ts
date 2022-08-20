@@ -53,7 +53,10 @@ class CardController {
         }
 
 
-        return newCardID;
+        return res.status(201).send({
+            message: "Successfully created new card.",
+            cardID: newCardID
+        });
     }
 
 
@@ -101,6 +104,51 @@ class CardController {
         });
     }
 
+
+
+    // GET 
+    // Returns the card of the given cardID
+    async getCard(req: Request, res: Response) {
+        const cardID = parseInt(req.params.cardID);
+        if (isNaN(cardID)) {
+            return res.status(400).send({
+                message: "Invalid cardID provided."
+            });
+        }
+
+        const card = await CardModel.getCard(cardID);
+        if (card === undefined) {
+            return res.status(404).send({
+                message: "Could not obtain card."
+            });
+        }
+
+        const authToken = req.headers.authorization || "";
+        if (authToken === "" ) {
+            return res.status(400).send({
+                message: "Token was not provided."
+            });
+        }
+        if (!await this.checkCardOwnership(cardID, authToken)) {
+            // Forbidden
+            return res.status(403).send({
+                message: "You do not have permission to view this card."
+            });
+        }
+
+        // Then, call the getCard function in the CardModel class to obtain card.
+        let cardData = CardModel.getCard(cardID);
+        if (cardData === undefined) {
+            return res.status(404).send({
+                message: "Could not obtain card."
+            });
+        }
+
+        
+        return res.status(200).send({
+            cardData
+        });
+    }
 
 
 
