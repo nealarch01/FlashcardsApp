@@ -12,6 +12,9 @@ class CardSetRouter {
     // GET
     getCardSetsFromCreator = Router().get("/card-set/creator/:userID", CardSetController.getCardSetsFromCreator); // Passed
 
+    // GET
+    getOwnedSets = Router().get("/card-set/owned", CardSetController.getOwnedSets); // Passed
+
     // POST 
     createCardSet = Router().post("/card-set/create", CardSetController.createCardSet); // Passed
 

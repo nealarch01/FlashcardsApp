@@ -29,6 +29,9 @@ app.use(UserAuthenticationRouter.registerRouter);
 
 // Card set routes
 app.use(CardSetRouter.getCardsInSet);
+app.use(CardSetRouter.getCardsMetaData);
+app.use(CardSetRouter.getCardSetsFromCreator);
+app.use(CardSetRouter.getOwnedSets);
 app.use(CardSetRouter.createCardSet);
 app.use(CardSetRouter.deleteCardSet);
 app.use(CardSetRouter.updateTitle);
