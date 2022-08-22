@@ -9,11 +9,14 @@ import SwiftUI
 
 
 struct FlashcardSetView: View {
-    @StateObject var viewModel = ViewModel()
-    @StateObject var flashcardSet: FlashcardSet
+    @StateObject private var viewModel = ViewModel()
+    
+    @StateObject var flashcardSet: FlashcardSet // Reqiured parameter
     
     @State private var expandOptions: Bool = false
     @State private var editModeOn: Bool = false
+    
+    @State private var showDeleteAlert: Bool = false
     
     var body: some View {
         ZStack {
@@ -35,51 +38,58 @@ struct FlashcardSetView: View {
                         HStack {
                             FlashcardView(flashcardData: viewModel.flashcardSet.cards[index])
                             if (editModeOn) {
-                                NavigationLink (
-                                    destination: FlashcardOptionView(flashcardData: viewModel.flashcardSet.cards[index])) {
-                                        Image(systemName: "chevron.right")
-                                            .font(.system(size: 28))
+                                VStack(spacing: 10) {
+                                    NavigationLink (
+                                        destination: EditFlashcardView(flashcardData: viewModel.flashcardSet.cards[index])) {
+                                            Image(systemName: "chevron.right")
+                                                .font(.system(size: 28))
+                                                .foregroundColor(Color.white)
+                                                .frame(width: 50, height: 70)
+                                                .background(Color.blue)
+                                                .cornerRadius(12)
+                                        }
+                                    Button(action: {
+                                        showDeleteAlert.toggle()
+                                    }) {
+                                        Image(systemName: "minus.circle.fill")
                                             .foregroundColor(Color.white)
                                             .frame(width: 50, height: 70)
-                                            .background(Color.blue)
+                                            .background(Color.red)
                                             .cornerRadius(12)
-                                            .padding([.trailing])
                                     }
-                            }
-                        }
-                    }
-                }
+                                    .alert("Are you sure you want to delete this card?", isPresented: $showDeleteAlert) {
+                                        Button("Cancel", role: .cancel) {} // Do nothing
+                                        Button("Confirm", role: .destructive) {
+                                            // Attempt to delete card from web API
+                                            // Then delete from UI, re-render
+                                        }
+                                    }
+                                }
+                                .padding([.trailing])
+                            } // End of Conditional render statement
+                        } // End of HStack
+                    } // End of ForEach
+                } // End of VStack
                 .padding([.bottom], 20)
             }
             .navigationTitle(viewModel.flashcardSet.title)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    HStack {
-                        Button(action: { toggleOptions() }) {
-                            Image(systemName: !expandOptions ? "plusminus.circle" : "plusminus.circle.fill")
-                                .foregroundColor(Color.blue)
-                        }
-                        if expandOptions {
-                            Button(action: {}) {
-                                Image(systemName: "minus.circle")
-                                    .foregroundColor(Color.red)
-                            }
-                            Button(action: {}) {
-                                Image(systemName: "plus.circle")
-                                    .foregroundColor(Color.green)
-                            }
-                        }
-                    }
-                    .font(.system(size: 26))
-                }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { toggleEditMode() }) {
+                    HStack {
+                        Button(action: {}) {
+                            Image(systemName: "plus.circle")
+                                .font(.system(size: 26))
+                                .foregroundColor(Color.green)
+                        }
+                        Button(action: { toggleEditMode() }) {
                         Image(systemName: !editModeOn ? "pencil.circle" : "pencil.circle.fill")
                             .font(.system(size: 26))
                             .foregroundColor(Color.blue)
+                        }
                     }
-                }
-            }
+                } // End of trailing ToolbarItem
+            } // End of navigationTitle
+            
         }
     }
     
@@ -96,6 +106,8 @@ struct FlashcardSetView: View {
 
 struct FlashcardSetView_Previews: PreviewProvider {
     static var previews: some View {
-        FlashcardSetView(flashcardSet: FlashcardSet())
+        NavigationView {
+            FlashcardSetView(flashcardSet: FlashcardSet())
+        }
     }
 }
