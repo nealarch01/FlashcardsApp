@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension FlashcardOptionView {
+extension EditFlashcardView {
     @MainActor final class ViewModel: ObservableObject {
         
         @Published var errorMessage: String = ""

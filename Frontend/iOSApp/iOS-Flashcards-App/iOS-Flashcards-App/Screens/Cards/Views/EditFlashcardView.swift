@@ -1,5 +1,5 @@
 //
-//  FlashcardOptionView.swift
+//  EditFlashcardView.swift
 //  iOS-Flashcards-App
 //
 //  Created by Neal Archival on 8/10/22.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FlashcardOptionView: View {
+struct EditFlashcardView: View {
     @StateObject private var viewModel = ViewModel()
     
     @EnvironmentObject var user: User
@@ -26,7 +26,7 @@ struct FlashcardOptionView: View {
     var body: some View {
         VStack {
             VStack(alignment: .leading, spacing: 0) {
-                Text("Top Card")
+                Text("Top Text")
                     .font(.system(size: 24, weight: .bold))
                     .padding([.leading], 10)
                 TextField("Enter text", text: $newPresented)
@@ -46,7 +46,7 @@ struct FlashcardOptionView: View {
             .padding([.leading, .trailing])
             
             VStack(alignment: .leading, spacing: 0) {
-                Text("Bottom Card")
+                Text("Bottom Text")
                     .font(.system(size: 24, weight: .bold))
                     .padding([.bottom], 8)
                     .padding([.leading], 10)
@@ -72,7 +72,7 @@ struct FlashcardOptionView: View {
             
             HStack {
                 Button(action: { discardChanges() }) {
-                    Text("Discard")
+                    Text("Discard Changes")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Color.white)
                         .frame(width: 150, height: 60)
@@ -81,7 +81,7 @@ struct FlashcardOptionView: View {
                 }
                 
                 Button(action: { saveChanges() }) {
-                    Text("Save")
+                    Text("Save Changes")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Color.white)
                         .frame(width: 150, height: 60)
@@ -114,8 +114,8 @@ struct FlashcardOptionView: View {
             }
         }
         .navigationTitle("Flashcard")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        
     }
     
     private func saveChanges() {
@@ -134,8 +134,10 @@ struct FlashcardOptionView: View {
     
 }
 
-struct FlashcardOptionView_Previews: PreviewProvider {
+struct EditFlashcardView_Previews: PreviewProvider {
     static var previews: some View {
-        FlashcardOptionView(flashcardData: Flashcard())
+        NavigationView {
+            EditFlashcardView(flashcardData: Flashcard())
+        }
     }
 }
