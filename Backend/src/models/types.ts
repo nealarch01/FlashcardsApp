@@ -39,3 +39,7 @@ export interface AllCardSetData {
     set_id: number;
 
 }
+
+export interface FlashcardSetData extends CardSetMetaData {
+    cards: Array<CardData>;
+}
