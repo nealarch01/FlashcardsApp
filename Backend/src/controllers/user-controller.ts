@@ -7,7 +7,7 @@ import UserModel from "../models/user-model";
 
 import InputValidator from "../utils/input-validator";
 
-import { GenericTypes as type } from "../utils/types";
+import { GenericTypes as type } from "../models/types";
 
 class UserController {
     public async login(req: Request, res: Response) {
