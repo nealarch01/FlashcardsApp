@@ -1,6 +1,8 @@
 import Database from "./database";
 
-import { CardSetMetaData, CardData } from "../utils/types";
+import CardModel from "./card-model";
+
+import { CardSetMetaData, CardData, FlashcardSetData } from "./types";
 
 class CardSetModel {
     // Creates a new card set and returns its ID
@@ -11,6 +13,10 @@ class CardSetModel {
         return queryResult.insertId;
     }
 
+
+
+
+
     // Deletes a flashcard set
     async deleteCardSet(setID: number): Promise<boolean> {
         let queryString = `DELETE FROM card_set WHERE id=${setID};`;
@@ -20,6 +26,9 @@ class CardSetModel {
         }
         return true;
     }
+
+
+
 
     // Updates the title of a flashcard set
     async updateTitle(setID: number, newTitle: string): Promise<boolean> {
@@ -32,6 +41,10 @@ class CardSetModel {
         return true;
     }
 
+
+
+
+
     // Updates the description of a flashcard set.
     async updateDescription(setID: number, newDescription: string): Promise<boolean> {
         let queryString = `UPDATE card_set SET description = ? WHERE id = ${setID};`;
@@ -42,6 +55,10 @@ class CardSetModel {
         }
         return true;
     }
+
+
+
+
 
     // Returns the meta data (title, description, created_at) of a flashcard set. This excludes the cards in the set.
     async getCardSetMetaDataFromID(setID: number): Promise<CardSetMetaData | undefined> {
@@ -61,12 +78,29 @@ class CardSetModel {
         return cardSetMetadata;
     }
 
+    async getCardSetDataFromID(setID: number): Promise<FlashcardSetData | undefined> {
+        let metadata: CardSetMetaData | undefined = await this.getCardSetMetaDataFromID(setID);
+        if (metadata === undefined) {
+            return undefined;
+        }
+        let cardsInSet: Array<CardData> | undefined = await this.getCardsInSet(setID);
+        let flashcardSet: FlashcardSetData = metadata as FlashcardSetData; // Typecast to FlashcardSetData (FlashcardSetData extends CardSetMetaData)
+        flashcardSet.cards = cardsInSet;
+        return flashcardSet;
+    }
+
+
+
+
     // Returns the card sets created by a specified user.
-    async getCardSetsFromCreator(creator_id: number): Promise<Array<CardSetMetaData>> {
+    async getCardSetsFromCreator(creator_id: number): Promise<Array<FlashcardSetData>> {
         let queryString = `SELECT * FROM card_set WHERE creator_id=${creator_id};`;
         let queryResult: any = await Database.query(queryString);
-        let cardSetMetadata: Array<CardSetMetaData> = [];
+        let flashcardsData: Array<FlashcardSetData> = [];
         for (let i = 0; i < queryResult.length; i++) {
+            let queryString2 = `SELECT id, presented, hidden FROM card WHERE id IN (SELECT card_id FROM set_data WHERE set_id=${queryResult[i].id});`;
+            let queryResult2: any = await Database.query(queryString2);
+            let cardsInSet = queryResult2 as Array<CardData>; // Typecast query to array of CardData
             let cardSet: CardSetMetaData = {
                 id: queryResult[i].id,
                 creator_id: creator_id,
@@ -75,10 +109,15 @@ class CardSetModel {
                 created_at: queryResult[i].created_at,
                 private: queryResult[i].private === 1 ? true : false
             };
-            cardSetMetadata.push(cardSet);
+            let flashcardSet: FlashcardSetData = cardSet as FlashcardSetData;
+            flashcardSet.cards = cardsInSet;
+            flashcardsData.push(flashcardSet);
         }
-        return cardSetMetadata;
+        return flashcardsData;
     }
+
+
+
 
     // Searches for cards with a similar title.
     async searchCardSetFromTitle(title: string): Promise<CardSetMetaData | undefined> {
@@ -98,6 +137,11 @@ class CardSetModel {
         };
         return cardSetMetadata;
     }
+
+
+
+
+
 
     // Transfers ownership from one owner to another.
     async transferCardSetOwnership(creator_id: number, setID: number, new_creator_id: number): Promise<boolean> {
@@ -119,6 +163,11 @@ class CardSetModel {
         return true;
     }
 
+
+
+
+
+
     // Deletes a card from a flashcard set.
     async removeCardFromSet(setID: number, card_id: number): Promise<boolean> {
         let queryString = `DELETE FROM set_data WHERE set_id = ${setID} AND card_id = ${card_id};`;
@@ -128,6 +177,10 @@ class CardSetModel {
         }
         return true;
     }
+
+
+
+
 
     // Gets all cards in a flashcard set.
     async getCardsInSet(set_id: number): Promise<Array<CardData>> {
@@ -145,6 +198,10 @@ class CardSetModel {
         return cards;
     }
 
+
+
+
+
     // Checks if a flashcard set is owned by a specific user.
     async checkUserOwnership(set_id: number, user_id: number): Promise<boolean> {
         let queryString = `SELECT * FROM card_set WHERE id=${set_id} AND creator_id=${user_id};`;
@@ -154,6 +211,10 @@ class CardSetModel {
         }
         return true;
     }
+
+
+
+
 
     // Determines whether a flashcard set is private.
     async isCardSetPrivate(setID: number): Promise<boolean> {
@@ -165,6 +226,10 @@ class CardSetModel {
         return true;
     }
 
+
+
+
+
     // Makes a flashcard set private.
     async makePrivate(setID: number): Promise<boolean> {
         let queryString = `UPDATE card_set SET private=1 WHERE id=${setID};`;
@@ -174,6 +239,10 @@ class CardSetModel {
         }
         return true;
     }
+
+
+
+
 
     // Makes a flashcard set public.
     async makePublic(setID: number): Promise<boolean> {
