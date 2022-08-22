@@ -10,6 +10,9 @@ class CardSetRouter {
     getCardsMetaData = Router().get("/card-set/metadata/:setID", CardSetController.getCardSetMetaDataFromID); // Passed
 
     // GET
+    getCardSetData = Router().get("/card-set/data/:setID", CardSetController.getCardSetDataFromID); 
+
+    // GET
     getCardSetsFromCreator = Router().get("/card-set/creator/:userID", CardSetController.getCardSetsFromCreator); // Passed
 
     // GET

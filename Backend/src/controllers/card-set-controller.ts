@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import AuthenticationToken from "../middlewares/authentication-token";
 import verifyRequestBody from "../middlewares/verify-request-body";
 
-import { CardSetMetaData, GenericTypes as types } from "../utils/types";
+import { CardSetMetaData, GenericTypes as types } from "../models/types";
 
 import CardSetModel from "../models/card-set-model";
 
@@ -80,7 +80,6 @@ class CardSetController {
             message: "Card set could not be deleted."
         });
     }
-
 
 
 
@@ -269,8 +268,6 @@ class CardSetController {
 
 
 
-
-
     // GET
     async getCardSetsFromCreator(req: Request, res: Response) {
         const userID = parseInt(req.params.userID);
@@ -297,7 +294,42 @@ class CardSetController {
     }
 
 
+    // GET
+    async getCardSetDataFromID(req: Request, res: Response) {
+        const setID = parseInt(req.params.setID);
+        if (isNaN(setID)) {
+            return res.status(400).send({
+                message: "Invalid setID."
+            });
+        }
 
+        const cardSet = await CardSetModel.getCardSetDataFromID(setID);
+        if (cardSet === undefined) {
+            return res.status(500).send({
+                message: "Internal server error. Could not get card set."
+            });                     
+        }
+
+        // If the card set is private, check if the user is the creator
+        if (cardSet.private === true) {
+            const authToken = req.headers.authorization || "";
+
+            if (!AuthenticationToken.isValid(authToken)) {
+                return res.status(400).send({
+                    message: "Invalid authentication token."
+                });
+            }
+
+            const user_id = AuthenticationToken.decode(authToken);
+            
+            if (cardSet.creator_id !== user_id) {
+                return res.status(401).send({
+                    message: "You do not have permission to view this set."
+                });
+            }
+        }
+        return res.status(200).send(cardSet);
+    }
 
     // GET 
     async getOwnedSets(req: Request, res: Response) {
@@ -317,6 +349,7 @@ class CardSetController {
         const user_id = AuthenticationToken.decode(authToken);
 
         const ownedSets = await CardSetModel.getCardSetsFromCreator(user_id!);
+
         return res.status(200).send(ownedSets);
     }
 
@@ -361,19 +394,6 @@ class CardSetController {
 
 
 
-
-
-
-
-    // GET
-    // Obtains both meta data and cards of a set
-    async getCardSetDataFromID(req: Request, res: Response) {
-
-        // Test other controller methods before implementing
-        return res.status(501).send({
-            message: "Not implemented."
-        });
-    }
 
     // PUT
     async makePrivate(req: Request, res: Response) {
