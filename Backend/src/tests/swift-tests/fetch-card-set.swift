@@ -117,6 +117,22 @@ class FlashcardSetDecodable: Decodable {
     var description: String
     var created_at: String
     var `private`: Bool
+    var cards: Array<FlashcardDecodable>?
+}
+
+func printFlashcardSet(set: FlashcardSetDecodable) {
+    print("Flashcard Set:")
+    print("ID: \(set.id)")
+    print("Creator ID: \(set.creator_id)")
+    print("Title: \(set.title)")
+    print("Description: \(set.description)")
+    print("Created At: \(set.created_at)")
+    print("Is Private: \(set.private)")
+    if set.cards == nil {
+        print("No cards were provided.")
+        return
+    }
+    print("Cards in set: \(set.cards!.count)")
 }
 
 
@@ -137,8 +153,16 @@ func fetchOwnedSets(authToken: String) async -> Void {
 
         resData = responseData
 
+        if httpResponse!.statusCode != 200 {
+            print("Error: \(httpResponse!.statusCode)")
+            exit(1)
+        }
+
         let response = try JSONDecoder().decode(Array<FlashcardSetDecodable>.self, from: resData)
-        print(response)
+
+        for set in response {
+            printFlashcardSet(set: set)
+        }
 
         if httpResponse == nil {
             print("Error: No response from server")
@@ -169,6 +193,14 @@ func fetchCardSet(setID: Int = 1) async -> Void {
             print("No response received")
             exit(1)
         }
+
+        print(httpResponse!.statusCode)
+
+        if httpResponse!.statusCode != 200 {
+            print("Error: \(httpResponse!.statusCode)")
+            exit(1)
+        }
+
         resData = responseData
     } catch let error {
         print(error.localizedDescription)
@@ -186,7 +218,7 @@ func fetchCardSet(setID: Int = 1) async -> Void {
 
 func main() {
     Task {
-        await fetchOwnedSets(authToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJpYXQiOjE2NjEwMjc0MTcsImV4cCI6MTY2MTExMzgxN30.7wBxEgdIC70Nu91oo0FMnOd0dKoNzqHO7u3U5v9RYWE")
+        await fetchOwnedSets(authToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJpYXQiOjE2NjE0MTAwNDcsImV4cCI6MTY2MTQ5NjQ0N30.PGnJsTQh_d-VqQ5ZQSaBgYXxhG6GJDPWXfOXUcRzX7Q")
         // await fetchCardSet()
     }
     RunLoop.main.run()
