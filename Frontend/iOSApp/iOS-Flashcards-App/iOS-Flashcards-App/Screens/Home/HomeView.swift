@@ -15,7 +15,7 @@ struct HomeView: View {
             NavigationView {
                 GeometryReader { geometry in
                     VStack(spacing: 40) {
-                        NavigationLink(destination: FlashcardSetListView(flashcardSets: [FlashcardSet()], title: "My Flashcard Sets")) {
+                        NavigationLink(destination: FlashcardSetListView(flashcardSets: [], fetchType: FlashcardSetList.SetType.owned, title: "My Flashcard Sets")) {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(Color.blue)
                                 .frame(width: geometry.size.width * 0.8, height: 100)
@@ -27,7 +27,7 @@ struct HomeView: View {
                                 }
                         }
                         .padding([.top], 10)
-                        NavigationLink(destination: FlashcardSetListView(flashcardSets: [FlashcardSet()], title:  "Saved Flashcard Sets")) {
+                        NavigationLink(destination: FlashcardSetListView(flashcardSets: [FlashcardSet()], fetchType: FlashcardSetList.SetType.owned, title:  "Saved Flashcard Sets")) {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(Color.pink)
                                 .frame(width: geometry.size.width * 0.8, height: 100)
@@ -38,7 +38,7 @@ struct HomeView: View {
                                         .foregroundColor(Color.white)
                                 }
                         }
-                        NavigationLink(destination: FlashcardSetListView(flashcardSets: [FlashcardSet()], title: "Collaborated Sets")) {
+                        NavigationLink(destination: FlashcardSetListView(flashcardSets: [FlashcardSet()], fetchType: FlashcardSetList.SetType.owned, title: "Collaborated Sets")) {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(Color.green)
                                 .frame(width: geometry.size.width * 0.8, height: 100)
