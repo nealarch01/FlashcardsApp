@@ -12,6 +12,7 @@ class Flashcard: ObservableObject {
     static public let hiddenMax: Int = 500
     
     private(set) var id: UInt64
+    
     // Make text Published to allow UI changes / updates when a card is modified
     @Published private(set) var presentedText: String // The "concept" / title card
     @Published private(set) var hiddenText: String // The description card
@@ -21,6 +22,13 @@ class Flashcard: ObservableObject {
         self.id = 0
         self.presentedText = "Lorem ipsum"
         self.hiddenText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+    }
+    
+    // Constructor to convert FlashcardDecodable to Flashcard
+    public init(decodedData: FlashcardDecodable) {
+        self.id = decodedData.id
+        self.presentedText = decodedData.presented
+        self.hiddenText = decodedData.hidden
     }
     
     public init(id: UInt64, presentedText: String, hiddenText: String) {
@@ -39,14 +47,14 @@ class Flashcard: ObservableObject {
         self.hiddenText = newHidden
     }
     
-    public func hiddenTextValid(newText: String) -> (successful: Bool, message: String) {
+    static public func hiddenTextValid(newText: String) -> (successful: Bool, message: String) {
         if newText.count >= Flashcard.hiddenMax {
             return (false, "Text must be less than 500 characters")
         }
         return (true, "Successfully updated card")
     }
     
-    public func presentedTextValid(newText: String) -> (successful: Bool, message: String) {
+    static public func presentedTextValid(newText: String) -> (successful: Bool, message: String) {
         if newText.count >= Flashcard.presentedMax {
             return (false, "Presented text must be less than 300 characters")
         }
