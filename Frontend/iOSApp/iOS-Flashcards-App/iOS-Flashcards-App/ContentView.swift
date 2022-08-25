@@ -14,7 +14,7 @@ struct ContentView: View {
         ZStack {
             Color.appWhite
                 .ignoresSafeArea(edges: [.all]) // Global background color
-            if !viewModel.userLoggedIn(user)  { // This will cause Canvas to crash but when ran on Simulator, won't crash
+            if !viewModel.userLoggedIn(user)  { 
                 AuthenticationView()
             } else {
                 HomeView()
@@ -26,5 +26,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(User())
     }
 }
