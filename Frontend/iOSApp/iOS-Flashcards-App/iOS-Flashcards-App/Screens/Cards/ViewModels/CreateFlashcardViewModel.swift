@@ -10,18 +10,11 @@ import Foundation
 
 extension CreateFlashcardView {
     @MainActor final class ViewModel: ObservableObject {
-        @Published var titleInput: String
-        @Published var descriptionInput: String
-        @Published var isPrivate: Bool
+        @Published var errorMessage: String = ""
         
-        init() {
-            self.titleInput = ""
-            self.descriptionInput = ""
-            self.isPrivate = false
-        }
+        @Published var presented: String = ""
+        @Published var hidden: String = ""
         
-        public func togglePrivacy() {
-            isPrivate.toggle()
-        }
+        @Published var isLoading: Bool = false
     }
 }

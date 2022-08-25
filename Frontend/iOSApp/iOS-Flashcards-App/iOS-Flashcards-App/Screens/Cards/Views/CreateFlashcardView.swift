@@ -9,101 +9,96 @@ import SwiftUI
 
 struct CreateFlashcardView: View {
     @StateObject private var viewModel = ViewModel()
+    
+    @State private var presented: String = ""
+    @State private var hidden: String = ""
+    @State private var isLoading: Bool = false
+
+    
     var body: some View {
         VStack {
-            GeometryReader { geometry in
-                VStack(alignment: .leading) {
-                    Text("Flashcard Title")
-                        .font(.system(size: 24, weight: .bold))
-                    TextField("Enter a title", text: $viewModel.titleInput)
-                        .padding() // Applies padding to the placeholder text
-                        .frame(width: geometry.size.width * 0.85, height: 40)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(12)
-                    
-                    Text("Description")
-                        .font(.system(size: 24, weight: .bold))
-                    TextEditor(text: $viewModel.descriptionInput)
-                        .frame(width: geometry.size.width * 0.85, height: 200)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.gray, lineWidth: 2)
-                        }
-                } // End of VStack
-                .padding(10)
-                .frame(width: geometry.size.width) // Centers the VStack horizontally
-            } // End of GeometryReader
-            .frame(height: 365)
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Top Text")
+                    .font(.system(size: 24, weight: .bold))
+                    .padding([.leading], 10)
+                TextField("Enter text", text: $viewModel.presented)
+                    .padding([.leading, .trailing])
+                    .padding([.top], 10)
+                    .padding([.bottom], 8)
+                    .overlay(alignment: .bottom) {
+                        Divider()
+                            .frame(height: 2)
+                            .background(Color.blue.opacity(0.9))
+                    }
+            }
+            .padding([.bottom], 30)
+            .overlay(alignment: .bottomTrailing) {
+                Text("\(viewModel.presented.count) / \(Flashcard.presentedMax)")
+            }
+            .padding([.leading, .trailing])
             
-            HStack(spacing: 20) {
-                Button(action: {
-                    togglePrivacySetting(privacyOption: "PUBLIC")
-                }) {
-                    Text("Public")
-                        .font(.system(size: 22, weight: .semibold))
-                        .frame(width: 120, height: 45)
-                        .foregroundColor(viewModel.isPrivate ? Color.blue : Color.white)
-                        .background(viewModel.isPrivate ? Color.white : Color.blue)
-                        .cornerRadius(12)
-                }
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Bottom Text")
+                    .font(.system(size: 24, weight: .bold))
+                    .padding([.bottom], 8)
+                    .padding([.leading], 10)
                 
-                Button(action: {
-                    togglePrivacySetting(privacyOption: "PRIVATE")
-                }) {
-                    Text("Private")
-                        .font(.system(size: 22, weight: .semibold))
-                        .frame(width: 120, height: 45)
-                        .foregroundColor(viewModel.isPrivate ? Color.white : Color.blue)
-                        .background(viewModel.isPrivate ? Color.blue : Color.white)
-                        .cornerRadius(12)
-                }
+                TextEditor(text: $viewModel.hidden)
+                    .frame(height: 200)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.blue, lineWidth: 2)
+                    }
+            }
+            .padding([.bottom], 30)
+            .overlay(alignment: .bottomTrailing) {
+                Text("\(viewModel.hidden.count) / \(Flashcard.hiddenMax)")
+            }
+            .padding()
+            
+            if viewModel.errorMessage != "" {
+                Text(viewModel.errorMessage)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(Color.red)
             }
             
             HStack {
-                Button(action: {}) {
-                    Text("Cancel")
-                        .font(.system(size: 20, weight: .medium))
+                Button(action: { }) {
+                    Text("Discard")
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Color.white)
-                        .frame(width: 150, height: 50)
+                        .frame(width: 150, height: 60)
                         .background(Color.red)
                         .cornerRadius(12)
                 }
                 
-                Button(action: {}) {
+                Button(action: {  }) {
                     Text("Create")
-                        .font(.system(size: 20, weight: .medium))
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Color.white)
-                        .frame(width: 150, height: 50)
+                        .frame(width: 150, height: 60)
                         .background(Color.blue)
                         .cornerRadius(12)
+                }.overlay(alignment: .trailing) {
+                    if isLoading {
+                        ProgressView()
+                            .tint(Color.white)
+                    }
                 }
             }
-            .padding([.top])
+            // Submit changes button
+            
             Spacer()
-        } // End of Root VStack
+        }
         .navigationTitle("Create flashcard")
         .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    private func togglePrivacySetting(privacyOption: String) {
-        // If the setting is re-clicked, do not update anything
-        if privacyOption == "PRIVATE" && viewModel.isPrivate {
-            return
-        } else if privacyOption == "PUBLIC" && !viewModel.isPrivate {
-            return
-        }
-        
-        let animation = Animation.easeOut(duration: 0.3)
-        withAnimation(animation) {
-            viewModel.togglePrivacy()
-        }
     }
 }
 
 struct CreateFlashcardView_Previews: PreviewProvider {
     static var previews: some View {
-        //        NavigationView {
+        NavigationView {
         CreateFlashcardView()
-        //        }
+        }
     }
 }
