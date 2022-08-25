@@ -2,7 +2,7 @@ import Database from "./database";
 
 import CardModel from "./card-model";
 
-import { CardSetMetaData, CardData, FlashcardSetData } from "./types";
+import { CardSetMetaData, CardData, CardSetData } from "./types";
 
 class CardSetModel {
     // Creates a new card set and returns its ID
@@ -78,13 +78,13 @@ class CardSetModel {
         return cardSetMetadata;
     }
 
-    async getCardSetDataFromID(setID: number): Promise<FlashcardSetData | undefined> {
+    async getCardSetDataFromID(setID: number): Promise<CardSetData | undefined> {
         let metadata: CardSetMetaData | undefined = await this.getCardSetMetaDataFromID(setID);
         if (metadata === undefined) {
             return undefined;
         }
         let cardsInSet: Array<CardData> | undefined = await this.getCardsInSet(setID);
-        let flashcardSet: FlashcardSetData = metadata as FlashcardSetData; // Typecast to FlashcardSetData (FlashcardSetData extends CardSetMetaData)
+        let flashcardSet: CardSetData = metadata as CardSetData; // Typecast to CardSetData (CardSetData extends CardSetMetaData)
         flashcardSet.cards = cardsInSet;
         return flashcardSet;
     }
@@ -93,10 +93,10 @@ class CardSetModel {
 
 
     // Returns the card sets created by a specified user.
-    async getCardSetsFromCreator(creator_id: number): Promise<Array<FlashcardSetData>> {
+    async getCardSetsFromCreator(creator_id: number): Promise<Array<CardSetData>> {
         let queryString = `SELECT * FROM card_set WHERE creator_id=${creator_id};`;
         let queryResult: any = await Database.query(queryString);
-        let flashcardsData: Array<FlashcardSetData> = [];
+        let flashcardsData: Array<CardSetData> = [];
         for (let i = 0; i < queryResult.length; i++) {
             let queryString2 = `SELECT id, presented, hidden FROM card WHERE id IN (SELECT card_id FROM set_data WHERE set_id=${queryResult[i].id});`;
             let queryResult2: any = await Database.query(queryString2);
@@ -109,7 +109,7 @@ class CardSetModel {
                 created_at: queryResult[i].created_at,
                 private: queryResult[i].private === 1 ? true : false
             };
-            let flashcardSet: FlashcardSetData = cardSet as FlashcardSetData;
+            let flashcardSet: CardSetData = cardSet as CardSetData;
             flashcardSet.cards = cardsInSet;
             flashcardsData.push(flashcardSet);
         }

@@ -33,13 +33,6 @@ export interface CardData {
     hidden: string;
 }
 
-
-export interface AllCardSetData {
-    card_id: number;
-    set_id: number;
-
-}
-
-export interface FlashcardSetData extends CardSetMetaData {
-    cards: Array<CardData>;
+export interface CardSetData extends CardSetMetaData {
+    cards?: Array<CardData>;
 }
