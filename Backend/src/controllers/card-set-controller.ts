@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import AuthenticationToken from "../middlewares/authentication-token";
 import verifyRequestBody from "../middlewares/verify-request-body";
 
-import { CardSetMetaData, GenericTypes as types } from "../models/types";
+import { CardSetData, CardData, CardSetMetaData, GenericTypes as types } from "../models/types";
 
 import CardSetModel from "../models/card-set-model";
 
@@ -269,6 +269,7 @@ class CardSetController {
 
 
     // GET
+    // Gets the flashcards created by some user
     async getCardSetsFromCreator(req: Request, res: Response) {
         const userID = parseInt(req.params.userID);
         // console.log(userID);
@@ -331,7 +332,13 @@ class CardSetController {
         return res.status(200).send(cardSet);
     }
 
+
+
+
+
+
     // GET 
+    // Gets the owned sets of a user using the authentication token (includes private sets)
     async getOwnedSets(req: Request, res: Response) {
         const authToken = req.headers.authorization || "";
         if (authToken === "") {
@@ -350,6 +357,16 @@ class CardSetController {
 
         const ownedSets = await CardSetModel.getCardSetsFromCreator(user_id!);
 
+        let metadataOnly = req.query["metadata-only"];
+        if (metadataOnly === "true") {
+            // Remove cards from object
+            ownedSets.forEach((set: CardSetData) => {
+                // Use delete operator to remove cards
+                delete set.cards;
+            });
+            return res.status(200).send(ownedSets);
+        }
+
         return res.status(200).send(ownedSets);
     }
 
@@ -358,6 +375,7 @@ class CardSetController {
 
 
     // GET
+    // Gets only the meta data of a set
     async getCardSetMetaDataFromID(req: Request, res: Response) {
         const setID = parseInt(req.params.setID);
         if (isNaN(setID)) {
