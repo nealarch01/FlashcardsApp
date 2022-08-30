@@ -1,4 +1,4 @@
-import { CardData } from "../utils/types";
+import { CardData } from "../models/types";
 import Database from "./database";
 
 class CardModel {

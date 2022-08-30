@@ -6,6 +6,7 @@ import express from "express";
 // Router imports
 import UserAuthenticationRouter from "./src/routes/user-authentication-router";
 import CardSetRouter from "./src/routes/card-set-router";
+import CardRouter from "./src/routes/card-router";
 
 const app = express();
 
@@ -37,6 +38,16 @@ app.use(CardSetRouter.createCardSet);
 app.use(CardSetRouter.deleteCardSet);
 app.use(CardSetRouter.updateTitle);
 app.use(CardSetRouter.updateDescription);
+
+
+// Card routes
+app.use(CardRouter.createCard);
+app.use(CardRouter.deleteCard);
+app.use(CardRouter.updatePresentedText);
+app.use(CardRouter.updateHiddenText);
+app.use(CardRouter.updateCardText);
+app.use(CardRouter.getCard);
+
 
 app.get("/test/:id", async (req: express.Request, res: express.Response) => {
     const authToken = req.headers.authorization || "";
