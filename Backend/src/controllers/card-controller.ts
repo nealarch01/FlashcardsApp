@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import CardModel from "../models/card-model";
+import CardSetModel from "../models/card-set-model";
 
 import verifyRequestBody from "../middlewares/verify-request-body";
 import AuthenticationToken from "../middlewares/authentication-token";
@@ -12,38 +13,43 @@ class CardController {
     // Creates a new flashcard.
     async createCard(req: Request, res: Response) {
         let authToken = req.headers.authorization || "";
-        if (authToken === "") { // Only users can create a card
+        if (authToken === "" || AuthenticationToken.isValid(authToken)) { // Only users can create a card
             return res.status(400).send({ 
                 message: "Invalid authentication token."
             });
         }
 
 
-        let presentedText = req.body["presented"];
-        let hiddenText = req.body["hidden"];
-
-
-        let reqError = verifyRequestBody(JSON.parse(req.body), ["presented", "hidden"], ["string", "string"]);
+        let reqError = verifyRequestBody(JSON.parse(req.body), ["presented", "hidden", "setID"], ["string", "string", "number"]);
         if (reqError !== null) {
             return res.status(400).send({
                 message: reqError.message
             });
         }
 
+        let presentedText = req.body["presented"];
+        let hiddenText = req.body["hidden"];
+        let cardSetID = req.body.cardSetID;
 
+        // Check the sizes of the text fields
         if (presentedText.length > this.presentedMax) {
             return res.status(400).send({
                 message: "Presented text is too long. Must be less than 50 characters."
             });
         }
-
-
         if (hiddenText.length > this.hiddenMax) {
             return res.status(400).send({
                 message: "Hidden text is too long. Must be less than 500 characters."
             })
         }
 
+        // Check the user owns the card set
+        let userID = AuthenticationToken.decode(authToken);
+        if (!await CardSetModel.checkUserOwnership(cardSetID, userID!)) {
+            return res.status(403).send({
+                message: "You do not have permission to create cards in this card set."
+            });
+        }
 
         let newCardID = await CardModel.createCard(presentedText, hiddenText);
 
@@ -54,6 +60,13 @@ class CardController {
             });
         }
 
+        // Add the card to an existing card set
+        
+        if (isNaN(cardSetID)) {
+            return res.status(400).send({
+                message: "Invalid cardSetID provided."
+            });
+        }
 
         return res.status(201).send({
             message: "Successfully created new card.",
