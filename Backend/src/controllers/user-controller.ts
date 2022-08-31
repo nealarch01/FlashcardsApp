@@ -13,8 +13,8 @@ class UserController {
     public async login(req: Request, res: Response) {
         // Expects:
         // { "userIdentifier": "...", "password": "..." }
+        const reqBodyErr = verifyRequestBody(req.body, ["userIdentifier", "password"], [type.string, type.string]);
         const reqBody = JSON.parse(req.body);
-        const reqBodyErr = verifyRequestBody(reqBody, ["userIdentifier", "password"], [type.string, type.string]);
         if (reqBodyErr !== null) {
             return res.status(reqBodyErr.status).send({
                 message: reqBodyErr.message

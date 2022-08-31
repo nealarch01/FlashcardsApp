@@ -1,7 +1,5 @@
 import Database from "./database";
 
-import CardModel from "./card-model";
-
 import { CardSetMetaData, CardData, CardSetData } from "./types";
 
 class CardSetModel {
@@ -155,7 +153,7 @@ class CardSetModel {
 
     // Creates a new card and adds it into a flashcard set.
     async addCardToSet(setID: number, card_id: number): Promise<boolean> {
-        let queryString = `INSERT INTO set_data (set_id, card_id) VALUES (${setID}, ${card_id}));`;
+        let queryString = `INSERT INTO set_data (set_id, card_id) VALUES (${setID}, ${card_id});`;
         let queryResult: any = await Database.query(queryString);
         if (queryResult.affectedRows === 0) {
             return false;
