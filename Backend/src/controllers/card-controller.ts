@@ -68,6 +68,14 @@ class CardController {
             });
         }
 
+        let addStatus = await CardSetModel.addCardToSet(cardSetID, newCardID);
+
+        if (!addStatus) {
+            return res.status(500).send({
+                message: "There was an error adding the card to the card set. Try again."
+            });
+        }
+
         return res.status(201).send({
             message: "Successfully created new card.",
             cardID: newCardID
