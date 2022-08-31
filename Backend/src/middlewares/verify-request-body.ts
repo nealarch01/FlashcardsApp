@@ -18,6 +18,7 @@ function verifyRequestBody(body: any, keys: Array<string>, expectedValueType: Ar
             message: "Error: Request body was not provided."
         }
     }
+    body = JSON.parse(body); // Convert from string to JSON
     for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
         if (typeof body[key] !== expectedValueType[i]) {

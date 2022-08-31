@@ -6,38 +6,39 @@ import CardSetModel from "../models/card-set-model";
 import verifyRequestBody from "../middlewares/verify-request-body";
 import AuthenticationToken from "../middlewares/authentication-token";
 
+const presentedMax: number = 50;
+const hiddenMax: number = 500;
+
 class CardController {
-    readonly presentedMax: number = 50;
-    readonly hiddenMax: number = 500;
     // POST
     // Creates a new flashcard.
     async createCard(req: Request, res: Response) {
         let authToken = req.headers.authorization || "";
-        if (authToken === "" || AuthenticationToken.isValid(authToken)) { // Only users can create a card
+        if (authToken === "" || !AuthenticationToken.isValid(authToken)) { // Only users can create a card
             return res.status(400).send({ 
                 message: "Invalid authentication token."
             });
         }
-
-
-        let reqError = verifyRequestBody(JSON.parse(req.body), ["presented", "hidden", "setID"], ["string", "string", "number"]);
+        let reqError = verifyRequestBody(req.body, ["presented", "hidden", "setID"], ["string", "string", "number"]);
         if (reqError !== null) {
             return res.status(400).send({
                 message: reqError.message
             });
         }
 
-        let presentedText = req.body["presented"];
-        let hiddenText = req.body["hidden"];
-        let cardSetID = req.body.cardSetID;
+        let reqBody = JSON.parse(req.body);
+
+        let presentedText = reqBody["presented"];
+        let hiddenText = reqBody["hidden"];
+        let cardSetID = reqBody["setID"];
 
         // Check the sizes of the text fields
-        if (presentedText.length > this.presentedMax) {
+        if (presentedText.length > presentedMax) {
             return res.status(400).send({
                 message: "Presented text is too long. Must be less than 50 characters."
             });
         }
-        if (hiddenText.length > this.hiddenMax) {
+        if (hiddenText.length > hiddenMax) {
             return res.status(400).send({
                 message: "Hidden text is too long. Must be less than 500 characters."
             })
@@ -196,7 +197,7 @@ class CardController {
         }
 
 
-        const reqErr = verifyRequestBody(JSON.parse(req.body), ["presented"], ["string"]);
+        const reqErr = verifyRequestBody(req.body, ["presented"], ["string"]);
         if (reqErr !== null) {
             return res.status(400).send({
                 message: reqErr.message
@@ -205,7 +206,7 @@ class CardController {
         const newPresentedText = req.body["presented"];
 
 
-        if (newPresentedText.length > this.presentedMax) {
+        if (newPresentedText.length > presentedMax) {
             return res.status(400).send({ 
                 message: "Presented text is too long. Must be less than 50 characters."
             });
@@ -259,7 +260,7 @@ class CardController {
         }
 
         // Verify the new hidden text
-        const reqErr = verifyRequestBody(JSON.parse(req.body), ["hidden"], ["string"]);
+        const reqErr = verifyRequestBody(req.body, ["hidden"], ["string"]);
         if (reqErr !== null) {
             return res.status(400).send({
                 message: reqErr.message
@@ -268,7 +269,7 @@ class CardController {
 
         const newHiddenText = req.body["hidden"];
 
-        if (newHiddenText.length > this.hiddenMax) {
+        if (newHiddenText.length > hiddenMax) {
             return res.status(400).send({ 
                 message: "Hidden text is too long. Must be less than 500 characters."
             });
@@ -319,7 +320,7 @@ class CardController {
         }
 
 
-        const reqErr = verifyRequestBody(JSON.parse(req.body), ["presented", "hidden"], ["string", "string"]);
+        const reqErr = verifyRequestBody(req.body, ["presented", "hidden"], ["string", "string"]);
         if (reqErr !== null) {
             return res.status(400).send({
                 message: reqErr.message
@@ -328,13 +329,13 @@ class CardController {
         const newPresentedText = req.body["presented"];
         const newHiddenText = req.body["hidden"];
 
-        if (newPresentedText.length > this.presentedMax) {
+        if (newPresentedText.length > presentedMax) {
             return res.status(400).send({ 
                 message: "Presented text is too long. Must be less than 50 characters."
             });
         }
 
-        if (newHiddenText.length > this.hiddenMax) {
+        if (newHiddenText.length > hiddenMax) {
             return res.status(400).send({ 
                 message: "Hidden text is too long. Must be less than 500 characters."
             });
