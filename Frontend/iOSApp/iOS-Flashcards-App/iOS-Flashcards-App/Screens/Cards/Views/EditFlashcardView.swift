@@ -21,6 +21,8 @@ struct EditFlashcardView: View {
     // Loading state to display progresse view on the Save button
     @State private var isLoading: Bool = false
     
+    @State private var discardClicked: Bool = false
+    
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -71,13 +73,19 @@ struct EditFlashcardView: View {
             }
             
             HStack {
-                Button(action: { discardChanges() }) {
+                Button(action: { discardClicked = true }) {
                     Text("Discard Changes")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Color.white)
                         .frame(width: 150, height: 60)
                         .background(Color.red)
                         .cornerRadius(12)
+                }
+                .alert("Are you sure you want to discard changes?", isPresented: $discardClicked) {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Discard", role: .destructive) {
+                        dismiss()
+                    }
                 }
                 
                 Button(action: { saveChanges() }) {
