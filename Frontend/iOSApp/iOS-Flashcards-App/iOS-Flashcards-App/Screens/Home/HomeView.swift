@@ -61,7 +61,6 @@ struct HomeView: View {
                     .navigationBarTitleDisplayMode(.inline)
                 } // End of Geometry Reader
             } // End of NavigationView
-            
             .tabItem {
                 Image(systemName: "house")
                 Text("Home")
@@ -79,6 +78,7 @@ struct HomeView: View {
                     Text("My Profile")
                 }
         } // End of TabView
+        .navigationViewStyle(.stack) // Specify this to prevent constraint error
     }
 }
 
