@@ -82,7 +82,7 @@ struct FlashcardSetView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
-                        Button(action: {}) {
+                        NavigationLink(destination: CreateFlashcardView()) {
                             Image(systemName: "plus.circle")
                                 .font(.system(size: 26))
                                 .foregroundColor(Color.green)
@@ -97,11 +97,15 @@ struct FlashcardSetView: View {
             } // End of navigationTitle
         } // End of ZStack
         .onAppear {
+            print("API Fetch Made") // Additionally, API will update afted a description is updated
             viewModel.flashcardSet = self.flashcardSet // Initialize ViewModel set
             Task {
                 let cards = await viewModel.fetchCards(authToken: user.authToken)
                 flashcardSet.cards = cards
             }
+        }
+        .onDisappear {
+            flashcardSet.cards = [] // Unset cards
         }
     }
     
