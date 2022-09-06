@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CreateFlashcardSetView: View {
     @StateObject private var viewModel = ViewModel()
+    @State private var alertDisplayed: Bool = false
+    @Environment(\.dismiss) var dismiss
     var body: some View {
         VStack {
             GeometryReader { geometry in
@@ -60,13 +62,19 @@ struct CreateFlashcardSetView: View {
             }
             
             HStack {
-                Button(action: {}) {
+                Button(action: {  }) {
                     Text("Cancel")
                         .font(.system(size: 20, weight: .medium))
                         .foregroundColor(Color.white)
                         .frame(width: 150, height: 50)
                         .background(Color.red)
                         .cornerRadius(12)
+                }
+                .alert("Are you sure you want to cancel?", isPresented: $alertDisplayed) {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Discard", role: .destructive) {
+                        dismiss()
+                    }
                 }
                 
                 Button(action: {}) {
@@ -88,6 +96,9 @@ struct CreateFlashcardSetView: View {
 
 struct CreateFlashcardSetView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateFlashcardSetView()
+        NavigationView {
+            CreateFlashcardSetView()
+                .environmentObject(User())
+        }
     }
 }
