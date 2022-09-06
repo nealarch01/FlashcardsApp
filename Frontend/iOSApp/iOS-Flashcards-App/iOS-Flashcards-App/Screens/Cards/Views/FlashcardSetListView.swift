@@ -45,7 +45,7 @@ struct FlashcardSetListView: View {
         .navigationTitle(title)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {}) {
+                NavigationLink(destination: CreateFlashcardSetView()) {
                     Text("New")
                 }
             } // End of ToolbarItem
