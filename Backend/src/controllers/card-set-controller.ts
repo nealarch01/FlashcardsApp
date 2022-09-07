@@ -237,26 +237,21 @@ class CardSetController {
             });
         }
 
-        if (await CardSetModel.isCardSetPrivate(setID)) {
-            const authToken = req.headers.authorization || "";
-            if (!AuthenticationToken.isValid(authToken)) {
-                return res.status(401).send({
+        if (await CardSetModel.isCardSetPrivate(setID)) { // If private
+            const authToken = req.headers.authorization || ""; // Obtain auth token
+            if (!AuthenticationToken.isValid(authToken)) { // Check validity, if not valid
+                return res.status(401).send({ // Return 401
                     message: "You do not have permission to view this set."
-                });
+                }); 
             }
-            const user_id = AuthenticationToken.decode(authToken);
-            if (!await CardSetModel.checkUserOwnership(user_id!, setID)) {
+            const user_id = AuthenticationToken.decode(authToken); // Decode token
+            if (!await CardSetModel.checkUserOwnership(setID, user_id!)) {
                 return res.status(401).send({
                     message: "You do not have permission to view this set."
                 });
             }
         }
 
-        if (isNaN(setID)) {
-            return res.status(400).send({
-                message: "Invalid setID format."
-            });
-        }
         const cards = await CardSetModel.getCardsInSet(setID);
         return res.status(200).send(cards);
     }
