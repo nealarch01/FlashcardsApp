@@ -14,6 +14,11 @@ class User: ObservableObject {
         authToken = "" // Initialize as an empty string by default
     }
     
+    
+    init(authToken: String) {
+        self.authToken = authToken
+    }
+    
     func setAuthToken(token: String) {
         self.authToken = token
     }

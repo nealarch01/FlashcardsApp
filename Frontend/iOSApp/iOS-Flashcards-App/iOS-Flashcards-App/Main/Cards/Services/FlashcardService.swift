@@ -108,4 +108,10 @@ class FlashcardService {
             return ([], error.localizedDescription)
         }
     }
+    
+    
+    // Makes an API call to change text
+    public func updateCardText() {
+//        var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/update-presented"))
+    }
 }

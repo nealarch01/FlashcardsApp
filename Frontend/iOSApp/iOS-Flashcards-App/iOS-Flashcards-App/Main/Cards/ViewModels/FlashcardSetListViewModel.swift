@@ -18,6 +18,10 @@ extension FlashcardSetListView {
             case .owned:
                 (sets, err) = await FlashcardService().fetchOwnedSets(authToken: authToken)
                 break
+                
+            default:
+                sets = []
+                break
             }
             
             if err != nil {
