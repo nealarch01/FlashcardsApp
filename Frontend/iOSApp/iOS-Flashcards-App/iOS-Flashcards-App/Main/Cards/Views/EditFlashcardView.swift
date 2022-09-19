@@ -25,6 +25,8 @@ struct EditFlashcardView: View {
     
     @Environment(\.dismiss) var dismiss
     
+    @EnvironmentObject var userData: User
+    
     var body: some View {
         VStack {
             VStack(alignment: .leading, spacing: 0) {
@@ -128,11 +130,12 @@ struct EditFlashcardView: View {
     
     private func saveChanges() {
         Task {
-            if await viewModel.updateCard(newPresented: newPresented, newHidden: newHidden) {
-                flashcardData.updateText(newPresented: newPresented, newHidden: newHidden)
-                dismiss()
+            if await viewModel.updateCard(newPresented: newPresented, newHidden: newHidden, cardID: flashcardData.id, authToken: userData.authToken) {
+                // We do not need to update on the client side, all data will be refetched when going back to FlashcardSetView 
+                dismiss() // Return after
                 return
             }
+            // If updateCard was unsuccessful, then an error message will be displayed and we will not leave the view
         }
     }
     
