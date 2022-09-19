@@ -62,8 +62,10 @@ struct CreateFlashcardSetView: View {
             }
             
             HStack {
-                Button(action: {  }) {
-                    Text("Cancel")
+                Button(action: {
+                    alertDisplayed = true
+                }) {
+                    Text("Discard")
                         .font(.system(size: 20, weight: .medium))
                         .foregroundColor(Color.white)
                         .frame(width: 150, height: 50)

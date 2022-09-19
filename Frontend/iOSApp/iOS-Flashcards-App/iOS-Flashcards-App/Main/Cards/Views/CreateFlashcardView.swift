@@ -76,7 +76,7 @@ struct CreateFlashcardView: View {
                         .frame(width: 150, height: 60)
                         .background(Color.red)
                         .cornerRadius(12)
-                }.alert("Are you sure you want to delete?", isPresented: $discardClicked) {
+                }.alert("Are you sure you want to discard?", isPresented: $discardClicked) {
                     Button("Cancel", role: .cancel) {}
                     Button("Discard", role: .destructive) {
                         dismiss()
