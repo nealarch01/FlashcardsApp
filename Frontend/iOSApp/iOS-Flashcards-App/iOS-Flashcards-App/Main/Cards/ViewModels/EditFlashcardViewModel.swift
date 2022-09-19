@@ -11,7 +11,7 @@ extension EditFlashcardView {
     @MainActor final class ViewModel: ObservableObject {
         @Published var errorMessage: String = ""
         
-        public func updateCard(newPresented: String, newHidden: String, authToken: String? = nil) async -> Bool {
+        public func updateCard(newPresented: String, newHidden: String, cardID: UInt64, authToken: String) async -> Bool {
             // Although redudant, have this safety regardless (ie, someone pastes something that is over the character limit)
             if newPresented.count > Flashcard.presentedMax {
                 errorMessage = "Top card has a maximum \(Flashcard.presentedMax) characters!"
@@ -28,24 +28,21 @@ extension EditFlashcardView {
                 return false
             }
             
-            // Implement API call here
-            var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/update/presented")!)
+            var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/update-text/\(cardID)")!)
             request.httpMethod = "PUT"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authroziation")
             
-            if authToken != nil {
-                request.setValue("Bearer \(authToken!)", forHTTPHeaderField: "Authroziation")
-            }
+            let updatedText = UpdateTextFormat(newPresented: newPresented, newHidden: newHidden)
             
             
-            let updatedText = UpdateText(newPresented: newPresented, newHidden: newHidden)
-            
+            // Encode the data
             guard let encodedData = try? JSONEncoder().encode(updatedText) else {
                 errorMessage = "An error occured. Try again."
                 return false
             }
             
-            request.httpBody = encodedData
+            request.httpBody = encodedData // Add to the HTTP body
             
             do {
                 let (_, urlResponse) = try await URLSession.shared.data(for: request)
@@ -55,8 +52,9 @@ extension EditFlashcardView {
                     errorMessage = "Could not update card."
                     return false
                 }
-                
+            
                 if httpUrlResponse.statusCode != 200 {
+
                     errorMessage = "Could not update card."
                     return false
                 }
@@ -71,7 +69,7 @@ extension EditFlashcardView {
         }
     }
     
-    private struct UpdateText: Encodable {
+    private struct UpdateTextFormat: Encodable {
         public let newPresented: String
         public let newHidden: String
     }
