@@ -111,7 +111,48 @@ class FlashcardService {
     
     
     // Makes an API call to change text
-    public func updateCardText() {
-//        var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/update-presented"))
+    // Returns true if the text was successfully updated
+    public func updateCardText(newPresented: String, newHidden: String, cardID: UInt64, authToken: String) async -> Bool {
+        var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/update-text/\(cardID)")!)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authroziation")
+        
+        let updatedText = UpdateTextFormat(newPresented: newPresented, newHidden: newHidden)
+        
+        
+        // Encode the data
+        guard let encodedData = try? JSONEncoder().encode(updatedText) else {
+            return false
+        }
+        
+        request.httpBody = encodedData // Add to the HTTP body
+        
+        do {
+            let (_, urlResponse) = try await URLSession.shared.data(for: request)
+            
+            guard let httpUrlResponse = urlResponse as? HTTPURLResponse else {
+                print("Could not convert URL Response to HTTP Response")
+                return false
+            }
+        
+            if httpUrlResponse.statusCode != 200 {
+                return false
+            }
+            
+            return true
+            
+        } catch let error {
+            print(error.localizedDescription)
+            return false // Unsuccessful return
+        }
     }
+    
 }
+
+
+private struct UpdateTextFormat: Encodable {
+    public let newPresented: String
+    public let newHidden: String
+}
+

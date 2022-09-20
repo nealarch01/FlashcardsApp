@@ -28,49 +28,15 @@ extension EditFlashcardView {
                 return false
             }
             
-            var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/update-text/\(cardID)")!)
-            request.httpMethod = "PUT"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authroziation")
+            let updateStatus = await FlashcardService().updateCardText(newPresented: newPresented, newHidden: newHidden, cardID: cardID, authToken: authToken)
             
-            let updatedText = UpdateTextFormat(newPresented: newPresented, newHidden: newHidden)
-            
-            
-            // Encode the data
-            guard let encodedData = try? JSONEncoder().encode(updatedText) else {
-                errorMessage = "An error occured. Try again."
+            if updateStatus == false {
+                errorMessage = "Could not update card. Try again."
                 return false
             }
             
-            request.httpBody = encodedData // Add to the HTTP body
+            return true
             
-            do {
-                let (_, urlResponse) = try await URLSession.shared.data(for: request)
-                
-                guard let httpUrlResponse = urlResponse as? HTTPURLResponse else {
-                    print("Could not convert URL Response to HTTP Response")
-                    errorMessage = "Could not update card."
-                    return false
-                }
-            
-                if httpUrlResponse.statusCode != 200 {
-
-                    errorMessage = "Could not update card."
-                    return false
-                }
-                
-                return true
-                
-            } catch let error {
-                print(error.localizedDescription)
-                errorMessage = "Could not update card."
-                return false // Unsuccessful return
-            }
-        }
-    }
-    
-    private struct UpdateTextFormat: Encodable {
-        public let newPresented: String
-        public let newHidden: String
+        } // End of updateCardFunction
     }
 }
