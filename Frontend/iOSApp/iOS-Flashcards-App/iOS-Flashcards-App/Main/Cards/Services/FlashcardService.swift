@@ -118,7 +118,7 @@ class FlashcardService {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authroziation")
         
-        let updatedText = UpdateTextFormat(newPresented: newPresented, newHidden: newHidden)
+        let updatedText = UpdateCardBody(newPresented: newPresented, newHidden: newHidden)
         
         
         // Encode the data
@@ -148,11 +148,57 @@ class FlashcardService {
         }
     }
     
+    
+    public func createCardSet(presentedText: String, hiddenText: String, authToken: String, setID: UInt64) async -> (success: Bool, message: String) {
+        var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/create")!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+
+        // Encode the data
+        guard let encodedData = try? JSONEncoder().encode(CreateCardBody(presented: presentedText, hidden: hiddenText, setID: setID)) else {
+            return (false, "Invalid text. Card not created.")
+        }
+        
+        request.httpBody = encodedData
+        
+        // Then make the HTTP request
+        
+        do {
+            let (responseData, urlResponse) = try await URLSession.shared.data(for: request)
+            
+            guard let httpUrlResponse = urlResponse as? HTTPURLResponse else {
+                return (false, "No response from server. Could not create card.")
+            }
+            
+            if httpUrlResponse.statusCode != 201 {
+                // Decode the data and return the error message
+                guard let webApiError = try? JSONDecoder().decode(WebAPIError.self, from: responseData) else {
+                    return (false, message: "No response from server. Could not create card.")
+                }
+                return (false, message: webApiError.message ?? "No message from server. Card not created.")
+            }
+            
+            return (true, "Successfully created new card.")
+            
+        } catch let error {
+            print("There was an error creating a new card")
+            print(error.localizedDescription)
+            return (false, "An error occured. Try again.")
+        }
+    }
+    
 }
 
 
-private struct UpdateTextFormat: Encodable {
+private struct UpdateCardBody: Encodable {
     public let newPresented: String
     public let newHidden: String
+}
+
+private struct CreateCardBody: Encodable {
+    public let presented: String
+    public let hidden: String
+    public let setID: UInt64
 }
 
