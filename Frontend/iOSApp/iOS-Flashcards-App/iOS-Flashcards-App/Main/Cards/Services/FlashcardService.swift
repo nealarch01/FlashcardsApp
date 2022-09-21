@@ -149,7 +149,7 @@ class FlashcardService {
     }
     
     
-    public func createCardSet(presentedText: String, hiddenText: String, authToken: String, setID: UInt64) async -> (success: Bool, message: String) {
+    public func createCard(presentedText: String, hiddenText: String, authToken: String, setID: UInt64) async -> (success: Bool, message: String) {
         var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/create")!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
