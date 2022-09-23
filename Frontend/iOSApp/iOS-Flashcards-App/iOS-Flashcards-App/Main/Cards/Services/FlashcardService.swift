@@ -12,7 +12,7 @@ class FlashcardService {
     public func fetchOwnedSets(authToken: String) async -> (Array<FlashcardSet>, String?) {
         var flashcardSets: Array<FlashcardSet> = [] // Initialize as an empty array
         
-        var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card-set/owned?metadata-only=true")!)
+        var request = URLRequest(url: URL(string: "http://127.0.0.1:1025/card-set/owned?metadata-only=true")!)
         
         request.httpMethod = "GET"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -67,7 +67,7 @@ class FlashcardService {
     // Makes an API fetch to obtain cards in set data
     public func fetchCardsInSet(setID: UInt64, authToken: String) async -> (Array<Flashcard>, String?) {
         // Accept auth token to allow access to a set that is private to the user
-        var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card-set/cards/\(setID)")!)
+        var request = URLRequest(url: URL(string: "http://127.0.0.1:1025/card-set/cards/\(setID)")!)
         request.httpMethod = "GET"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
@@ -113,7 +113,7 @@ class FlashcardService {
     // Makes an API call to change text
     // Returns true if the text was successfully updated
     public func updateCardText(newPresented: String, newHidden: String, cardID: UInt64, authToken: String) async -> Bool {
-        var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/update-text/\(cardID)")!)
+        var request = URLRequest(url: URL(string: "http://127.0.0.1:1025/card/update-text/\(cardID)")!)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authroziation")
@@ -150,7 +150,7 @@ class FlashcardService {
     
     
     public func createCard(presentedText: String, hiddenText: String, authToken: String, setID: UInt64) async -> (success: Bool, message: String) {
-        var request = URLRequest(url: URL(string: "http://127.0.0.1:1000/card/create")!)
+        var request = URLRequest(url: URL(string: "http://127.0.0.1:1025/card/create")!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")

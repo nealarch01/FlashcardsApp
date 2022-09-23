@@ -10,7 +10,7 @@ import CardRouter from "./src/routes/card-router";
 
 const app = express();
 
-const port: number = 1000
+const port: number = 1025;
 
 app.use(express.text({
     type: "application/json"

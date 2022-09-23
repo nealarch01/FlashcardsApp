@@ -63,7 +63,7 @@ class AuthenticationService {
     }
     
     public func attemptLogin(userIdentifier: String, password: String) async -> AuthenticationStatus {
-        let apiURL = URL(string: "http://127.0.0.1:1000/auth/login")!
+        let apiURL = URL(string: "http://127.0.0.1:1025/auth/login")!
         let httpBodyParams = try! JSONEncoder().encode(LoginBodyParams(userIdentifier: userIdentifier, password: password))
         let (authResponse, statusCode) = await postRequest(apiURL: apiURL, requestBody: httpBodyParams)
         if authResponse == nil || statusCode == nil {
@@ -77,7 +77,7 @@ class AuthenticationService {
     }
     
     public func createNewAccount(username: String, password: String, email: String) async -> AuthenticationStatus {
-        let apiURL = URL(string: "http://127.0.0.1:1000/auth/register")!
+        let apiURL = URL(string: "http://127.0.0.1:1025/auth/register")!
         let registerBodyParams = try! JSONEncoder().encode(RegisterBodyParams(username: username, password: password, email: email))
         let (authResponse, statusCode) = await postRequest(apiURL: apiURL, requestBody: registerBodyParams)
         if authResponse == nil || statusCode == nil {
