@@ -78,7 +78,7 @@ struct HomeView: View {
                     Text("My Profile")
                 }
         } // End of TabView
-        .navigationViewStyle(.stack) // Specify this to prevent constraint error
+//        .navigationViewStyle(.stack) // Specify this to prevent constraint error
     }
 }
 
