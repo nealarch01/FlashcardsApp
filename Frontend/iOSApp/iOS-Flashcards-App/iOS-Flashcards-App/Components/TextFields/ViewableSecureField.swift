@@ -26,34 +26,29 @@ struct ViewableSecureField: View {
                     Spacer()
                 }
                 .frame(width: 310)
-                HStack {
+                HStack(spacing: 0) {
                     if isSecure == true {
                         SecureField(placeholder, text: $text)
-                            .padding()
-                            .frame(width: 310, height: 50)
-                            .background(Color.black.opacity(0.05))
-                            .cornerRadius(12)
-                            .disableAutocorrection(true)
+                            .padding() // Placeholder and text padding
+                            .frame(width: 265, height: 50)
                     } else {
-                        TextField(text == "" ? "Enter password" : text, text: $text)
+                        TextField(text == "" ? placeholder : text, text: $text)
                             .padding()
-                            .frame(width: 310, height: 50)
-                            .background(Color.black.opacity(0.05))
-                            .cornerRadius(12)
-                            .disableAutocorrection(true)
+                            .frame(width: 265, height: 50)
                     }
-                }.overlay(alignment: .trailing) {
                     Button(action: {
                         isSecure.toggle()
                     }) {
                         Image(systemName: isSecure == true ? "eye.slash" : "eye")
                             .font(.system(size: 18, weight: .medium))
                             .foregroundColor(Color.black)
-                            .padding([.leading, .trailing], 10)
-                            .frame(height: 45)
                     }
-                }
-            }
+                    Spacer()
+                } // HStack
+                .frame(width: 310, height: 50)
+                .background(Color.black.opacity(0.05))
+                .cornerRadius(12)
+            } // VStack
             .padding([.top, .bottom], 5)
             .frame(width: geometry.size.width)
         } // End of GeometryReader
