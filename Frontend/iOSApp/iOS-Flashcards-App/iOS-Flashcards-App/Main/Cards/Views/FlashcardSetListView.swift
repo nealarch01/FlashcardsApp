@@ -12,7 +12,7 @@ import SwiftUI
 struct FlashcardSetListView: View {
     @StateObject private var viewModel = ViewModel()
     
-    @State var flashcardSets: Array<FlashcardSet>
+    @State var flashcardSets: Array<FlashcardSet> = [] // Initialize as empty
     
     let fetchType: FlashcardSetList.SetType
     
@@ -52,8 +52,8 @@ struct FlashcardSetListView: View {
         } // End of toolbar
         .onAppear {
             Task {
-                let response = await viewModel.fetchFlashcardSets(fetchType: .owned, authToken: self.user.authToken)
-                flashcardSets = response // Note, this does not obtain flashcard sets
+                // ViewModel will decide what to fetch, no need to add checks here
+                flashcardSets = await viewModel.fetchFlashcardSets(fetchType: self.fetchType, authToken: self.user.authToken)
             }
         }
     }
