@@ -49,6 +49,20 @@ struct HomeView: View {
                                         .foregroundColor(Color.white)
                                 }
                         }
+                        
+                        NavigationLink(destination: FlashcardSetListView(flashcardSets: [FlashcardSet()], fetchType: FlashcardSetList.SetType.test, title: "Test Sets")) {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.black)
+                                .frame(width: geometry.size.width * 0.8, height: 100)
+                                .shadow(radius:12)
+                                .overlay(alignment: .center) {
+                                    Text("Test Sets")
+                                        .font(.system(size: 32, weight: .semibold))
+                                        .foregroundColor(Color.white)
+                                }
+                        }
+                        
+                        
                         Button(action: {
                             viewModel.logout(user)
                         }) {
