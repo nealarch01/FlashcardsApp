@@ -75,7 +75,9 @@ struct EditFlashcardView: View {
             }
             
             HStack {
-                Button(action: { discardClicked = true }) {
+                Button(action: {
+                    discardClicked = true // Show an alert
+                }) {
                     Text("Discard Changes")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Color.white)
@@ -90,7 +92,9 @@ struct EditFlashcardView: View {
                     }
                 }
                 
-                Button(action: { saveChanges() }) {
+                Button(action: {
+                    // saveChanges()
+                }) {
                     Text("Save Changes")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Color.white)
@@ -130,12 +134,13 @@ struct EditFlashcardView: View {
     
     private func saveChanges() {
         Task {
-            if await viewModel.updateCard(newPresented: newPresented, newHidden: newHidden, cardID: flashcardData.id, authToken: userData.authToken) {
-                // We do not need to update on the client side, all data will be refetched when going back to FlashcardSetView 
-                dismiss() // Return after
-                return
+            let updateStatus = await viewModel.updateCard(newPresented: newPresented, newHidden: newHidden, cardID: flashcardData.id, authToken: userData.authToken)
+            if updateStatus { // If successful, return
+                dismiss() // Return back to the flashcards screen
             }
+            
             // If updateCard was unsuccessful, then an error message will be displayed and we will not leave the view
+            // Error message will be generated in the ViewModel
         }
     }
     
