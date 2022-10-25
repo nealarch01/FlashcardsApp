@@ -17,9 +17,12 @@ extension FlashcardSetListView {
             switch fetchType {
             case .owned:
                 (sets, err) = await FlashcardService().fetchOwnedSets(authToken: authToken)
-                break
+                break                
                 
-            default:
+            case .test:
+                sets = [FlashcardSet()] // One test set of Lorem Ipsum
+                break
+            default: 
                 sets = []
                 break
             }
