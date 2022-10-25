@@ -27,5 +27,8 @@ extension CreateFlashcardSetView {
             }
             isPrivate.toggle()
         }
+        
+        public func createNewCardSet() async {
+        }
     }
 }

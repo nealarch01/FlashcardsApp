@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CreateFlashcardView: View {
+    let setID: UInt64
+    // Non-parameters
     @StateObject private var viewModel = ViewModel()
     
     @State private var presented: String = ""
@@ -15,9 +17,9 @@ struct CreateFlashcardView: View {
     @State private var isLoading: Bool = false
     
     @State private var discardClicked: Bool = false
-
     
-    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject private var user: User
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         VStack {
@@ -83,7 +85,9 @@ struct CreateFlashcardView: View {
                     }
                 }
                 
-                Button(action: {  }) {
+                Button(action: {
+                    
+                }) {
                     Text("Create")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Color.white)
@@ -105,6 +109,12 @@ struct CreateFlashcardView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
     
+    private func attemptCreateCard() {
+        Task {
+            await viewModel.createNewCard(authToken: user.authToken, setID: setID)
+        }
+    }
+    
     func discardAlert() {
         
     }
@@ -113,7 +123,7 @@ struct CreateFlashcardView: View {
 struct CreateFlashcardView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-        CreateFlashcardView()
+            CreateFlashcardView(setID: 1)
         }
     }
 }
