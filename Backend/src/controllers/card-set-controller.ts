@@ -494,6 +494,17 @@ class CardSetController {
     }
 
 
+    // GET 
+    async searchCardSets(req: Request, res: Response) {
+        let title = req.query.title as string || "";
+        if (title === "") {
+            return res.status(400).send({
+                message: "Title was not provided."
+            });
+        }
+        const sets = await CardSetModel.searchCardSetFromTitle(title);
+        return res.status(200).send(sets);
+    }
 
 
 }
