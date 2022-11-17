@@ -7,10 +7,10 @@ import { CardSetData, CardData, CardSetMetaData, GenericTypes as types } from ".
 
 import CardSetModel from "../models/card-set-model";
 
-class CardSetController {
+namespace CardSetController {
     // POST
     // Create a new card set
-    async createCardSet(req: Request, res: Response) {
+    export async function  createCardSet(req: Request, res: Response) {
         const authToken = req.headers.authorization || "";
         if (authToken === "") {
             return res.status(400).send({
@@ -45,7 +45,7 @@ class CardSetController {
 
     // DELETE
     // Delete a card set
-    async deleteCardSet(req: Request, res: Response) {
+    export async function  deleteCardSet(req: Request, res: Response) {
         const authToken = req.headers.authorization || "";
         if (!AuthenticationToken.isValid(authToken)) {
             return res.status(400).send({
@@ -90,7 +90,7 @@ class CardSetController {
 
     // PUT
     // Updates the title of a card set
-    async updateCardSetTitle(req: Request, res: Response) {
+    export async function  updateCardSetTitle(req: Request, res: Response) {
         // Expects: { "title": "..." }
         let authToken = req.headers.authorization || ""
         if (authToken === "") {
@@ -163,7 +163,7 @@ class CardSetController {
 
     // PUT
     // Updates the description of a card set
-    async updateCardSetDescription(req: Request, res: Response) {
+    export async function  updateCardSetDescription(req: Request, res: Response) {
         const authToken = req.headers.authorization || "";
         if (authToken === "") {
             return res.status(400).send({
@@ -227,7 +227,7 @@ class CardSetController {
 
     // GET 
     // Get the flashcards in a set
-    async getCardsInSet(req: Request, res: Response) {
+    export async function  getCardsInSet(req: Request, res: Response) {
         // console.log(req.params.setID);
         const setID = parseInt(req.params.setID);
 
@@ -265,7 +265,7 @@ class CardSetController {
 
     // GET
     // Gets the flashcards created by some user
-    async getCardSetsFromCreator(req: Request, res: Response) {
+    export async function  getCardSetsFromCreator(req: Request, res: Response) {
         const userID = parseInt(req.params.userID);
         // console.log(userID);
         if (isNaN(userID)) {
@@ -296,7 +296,7 @@ class CardSetController {
     
 
     // GET
-    async getCardSetDataFromID(req: Request, res: Response) {
+    export async function  getCardSetDataFromID(req: Request, res: Response) {
         const setID = parseInt(req.params.setID);
         if (isNaN(setID)) {
             return res.status(400).send({
@@ -339,7 +339,7 @@ class CardSetController {
 
     // GET 
     // Gets the owned sets of a user using the authentication token (includes private sets)
-    async getOwnedSets(req: Request, res: Response) {
+    export async function  getOwnedSets(req: Request, res: Response) {
         const authToken = req.headers.authorization || "";
         if (authToken === "") {
             return res.status(400).send({
@@ -376,7 +376,7 @@ class CardSetController {
 
     // GET
     // Gets only the meta data of a set
-    async getCardSetMetaDataFromID(req: Request, res: Response) {
+    export async function  getCardSetMetaDataFromID(req: Request, res: Response) {
         const setID = parseInt(req.params.setID);
         if (isNaN(setID)) {
             return res.status(400).send({
@@ -414,7 +414,7 @@ class CardSetController {
 
 
     // PUT
-    async makePrivate(req: Request, res: Response) {
+    export async function  makePrivate(req: Request, res: Response) {
         let authToken = req.headers.authorization || "";
         if (authToken === "") {
             return res.status(400).send({
@@ -459,7 +459,7 @@ class CardSetController {
 
 
     // PUT
-    async makePublic(req: Request, res: Response) {
+    export async function  makePublic(req: Request, res: Response) {
         let authToken = req.headers.authorization || "";
         if (authToken === "") {
             return res.status(400).send({
@@ -495,7 +495,7 @@ class CardSetController {
 
 
     // GET 
-    async searchCardSets(req: Request, res: Response) {
+    export async function  searchCardSets(req: Request, res: Response) {
         let title = req.query.title as string || "";
         if (title === "") {
             return res.status(400).send({
@@ -510,4 +510,4 @@ class CardSetController {
 }
 
 
-export default new CardSetController();
+export default CardSetController;

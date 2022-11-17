@@ -9,10 +9,10 @@ import AuthenticationToken from "../middlewares/authentication-token";
 const presentedMax: number = 50;
 const hiddenMax: number = 500;
 
-class CardController {
+namespace CardController {
     // POST
     // Creates a new flashcard.
-    async createCard(req: Request, res: Response) {
+    export async function createCard(req: Request, res: Response) {
         let authToken = req.headers.authorization || "";
         if (authToken === "" || !AuthenticationToken.isValid(authToken)) { // Only users can create a card
             return res.status(400).send({ 
@@ -89,7 +89,7 @@ class CardController {
 
     // DELETE
     // Deletes the card with the given cardID.
-    async deleteCard(req: Request, res: Response) {
+    export async function deleteCard(req: Request, res: Response) {
         let authToken = req.headers.authorization || "";
         if (authToken === "") {
             return res.status(400).send({ 
@@ -108,7 +108,7 @@ class CardController {
 
 
         // Check if the user owns the card 
-        if (!this.checkCardOwnership(cardID, authToken)) {
+        if (checkCardOwnership(cardID, authToken)) {
             // Forbidden
             return res.status(403).send({
                 message: "You do not have permission to delete this card."
@@ -132,7 +132,7 @@ class CardController {
 
     // GET 
     // Returns the card of the given cardID
-    async getCard(req: Request, res: Response) {
+    export async function getCard(req: Request, res: Response) {
         const cardID = parseInt(req.params.cardID);
         if (isNaN(cardID)) {
             return res.status(400).send({
@@ -153,7 +153,7 @@ class CardController {
                 message: "Token was not provided."
             });
         }
-        if (!await this.checkCardOwnership(cardID, authToken)) {
+        if (!await checkCardOwnership(cardID, authToken)) {
             // Forbidden
             return res.status(403).send({
                 message: "You do not have permission to view this card."
@@ -180,7 +180,7 @@ class CardController {
 
     // PUT
     // Updates the presented text
-    async updatePresentedText(req: Request, res: Response) {            
+    export async function updatePresentedText(req: Request, res: Response) {            
         let authToken = req.headers.authorization || "";
         if (authToken === "") {
             return res.status(400).send({ 
@@ -214,7 +214,7 @@ class CardController {
 
 
         // Check if the user owns the card.
-        if (!this.checkCardOwnership(cardID, authToken)) {
+        if (checkCardOwnership(cardID, authToken)) {
             return res.status(403).send({
                 message: "You do not have permission to update this card."
             });
@@ -243,7 +243,7 @@ class CardController {
 
     // PUT
     // Updates the hidden text
-    async updateHiddenText(req: Request, res: Response) {
+    export async function updateHiddenText(req: Request, res: Response) {
         let authToken = req.headers.authorization || "";
         if (authToken === "") {
             return res.status(400).send({ 
@@ -276,7 +276,7 @@ class CardController {
         }
 
         // Now obtain the userID from the authentication token to detemrine if the user owns the card.
-        if (!this.checkCardOwnership(cardID, authToken)) {
+        if (checkCardOwnership(cardID, authToken)) {
             return res.status(403).send({
                 message: "You do not have permission to update this card."
             });
@@ -298,7 +298,7 @@ class CardController {
 
     // PUT 
     // Updates both the presented and hidden text of the card.
-    async updateCardText(req: Request, res: Response) {
+    export async function updateCardText(req: Request, res: Response) {
         let authToken = req.headers.authorization || "";
         if (authToken === "") {
             return res.status(400).send({ 
@@ -313,7 +313,7 @@ class CardController {
             });
         }
 
-        if (!this.checkCardOwnership(cardID, authToken)) {
+        if (checkCardOwnership(cardID, authToken)) {
             return res.status(403).send({
                 message: "You do not have permission to update this card."
             });
@@ -360,7 +360,7 @@ class CardController {
 
     // Private function that checks if the user owns the card with the given cardID.
     // Use for when updating
-    private checkCardOwnership(cardID: number, authToken: string) {
+    function checkCardOwnership(cardID: number, authToken: string) {
         const userID = AuthenticationToken.decode(authToken);
         if (userID === undefined || isNaN(userID)) {
             return false;
@@ -370,4 +370,4 @@ class CardController {
 
 }
 
-export default new CardController();
+export default CardController;

@@ -9,8 +9,8 @@ import InputValidator from "../utils/input-validator";
 
 import { GenericTypes as type } from "../models/types";
 
-class UserController {
-    public async login(req: Request, res: Response) {
+namespace UserController {
+    export async function login(req: Request, res: Response) {
         // Expects:
         // { "userIdentifier": "...", "password": "..." }
         const reqBodyErr = verifyRequestBody(req.body, ["userIdentifier", "password"], [type.string, type.string]);
@@ -90,7 +90,7 @@ class UserController {
 
 
 
-    public async createAccount(req: Request, res: Response) {
+    export async function createAccount(req: Request, res: Response) {
         const reqBody = JSON.parse(req.body);
         // Verify body 
         let reqBodyErr = verifyRequestBody(reqBody, ["username", "password", "email"], [type.string, type.string, type.string]);
@@ -142,7 +142,7 @@ class UserController {
 
 
 
-    public async deleteUser(req: Request, res: Response) {
+    export async function deleteUser(req: Request, res: Response) {
         const authToken = req.headers.authorization;
         if (authToken === undefined) {
             res.statusCode = 401;
@@ -164,4 +164,4 @@ class UserController {
 }
 
 
-export default new UserController();
+export default UserController;
